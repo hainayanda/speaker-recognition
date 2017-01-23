@@ -14,34 +14,35 @@ public class LinearPredictive {
 		double[] coeficients = new double[signatureSize];
 		double[] autoCorrelation = new double[signatureSize + 1];
 
-		for (int i = signatureSize; i > 0; i--) {
+		int i, j;
+		j = signatureSize + 1;
+		while (j-- != 0) {
 			double temp = 0.0F;
-			for (int j = i; j < samples.length; j++)
-				temp += samples[j] * samples[j - i];
-			autoCorrelation[i] = temp;
+			for (i = j; i < samples.length; i++)
+				temp += samples[i] * samples[i - j];
+			autoCorrelation[j] = temp;
 		}
 
 		error = autoCorrelation[0];
-		for (int i = 0; i < signatureSize; i++) {
+		for (i = 0; i < signatureSize; i++) {
 			double temp = -autoCorrelation[i + 1];
 			if (error == 0) {
-				for (int j = 0; j < signatureSize; j++)
-					coeficients[j] = 0.0f;
+				for (int k = 0; k < signatureSize; k++)
+					coeficients[k] = 0.0f;
 			}
-			for (int j = 0; j < i; j++)
+			for (j = 0; j < i; j++)
 				temp -= coeficients[j] * autoCorrelation[i - j];
 
 			temp /= error;
 			coeficients[i] = temp;
 
-			int index;
-			for (index = 0; index < i / 2; index++) {
-				double tmp = coeficients[index];
-				coeficients[index] += temp * coeficients[i - 1 - index];
-				coeficients[i - 1 - index] += temp * tmp;
+			for (j = 0; j < i / 2; j++) {
+				double tmp = coeficients[j];
+				coeficients[j] += temp * coeficients[i - 1 - j];
+				coeficients[i - 1 - j] += temp * tmp;
 			}
 			if (i % 2 != 0)
-				coeficients[index] += coeficients[index] * temp;
+				coeficients[j] += coeficients[j] * temp;
 			error *= 1.0 - temp * temp;
 		}
 
