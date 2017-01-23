@@ -14,7 +14,7 @@ import local.soundanalysis.util.Printer;
 import local.soundanalysis.vq.VectorLearning;
 import local.soundanalysis.vq.Vectors;
 
-public class Main {
+public class VectorQuantizationLearn {
 
 	public static final int LPC_SIGNATURE_LENGTH = 20;
 	public static final int MFCC_SIGNATURE_LENGTH = 13;
