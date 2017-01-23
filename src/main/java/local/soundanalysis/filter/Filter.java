@@ -12,9 +12,11 @@ import static local.soundanalysis.util.Utils.*;
 
 public class Filter {
 
-	private Filter() {}
+	private Filter() {
+	}
 
-	public static Sound bandPass(Sound sound, double lowCutOff, double highCutOff) throws OperationNotSupportedException {
+	public static Sound bandPass(Sound sound, double lowCutOff, double highCutOff)
+			throws OperationNotSupportedException {
 		highCutOff /= sound.getSampleRate();
 		lowCutOff /= sound.getSampleRate();
 		double[] samples = sound.getSamples();
@@ -33,8 +35,10 @@ public class Filter {
 			bandPass = emaSHigh - emaSLow;
 			bandStop[i] = samples[i] - bandPass;
 			if (bandStop[i] == Double.NaN || bandStop[i] == Double.NEGATIVE_INFINITY
-					|| bandStop[i] == Double.POSITIVE_INFINITY) throw new OperationNotSupportedException("EMA S LOW: " + emaSLow + " EMA S HIGH: " + emaSHigh + " BAND PASS: " + bandPass + " SAMPLES: " + samples[i] + " ");
-			
+					|| bandStop[i] == Double.POSITIVE_INFINITY)
+				throw new OperationNotSupportedException("EMA S LOW: " + emaSLow + " EMA S HIGH: " + emaSHigh
+						+ " BAND PASS: " + bandPass + " SAMPLES: " + samples[i] + " ");
+
 		}
 
 		return new Sound(bandStop, sound.getSampleRate());
@@ -42,7 +46,7 @@ public class Filter {
 
 	public static Sound silenceRemover(Sound sound) {
 		int divider = (int) (((double) sound.samplesLength() / (double) sound.getSampleRate()) * 10);
-		if(divider == 0)
+		if (divider == 0)
 			divider++;
 		double[][] frames = getFrames(sound.getSamples(), divider);
 		List<double[]> framesList = new LinkedList<double[]>();

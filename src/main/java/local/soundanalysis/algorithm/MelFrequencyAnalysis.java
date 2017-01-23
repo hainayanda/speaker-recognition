@@ -9,7 +9,8 @@ import local.soundanalysis.model.signal.Spectra;
 
 public class MelFrequencyAnalysis {
 
-	private MelFrequencyAnalysis() {}
+	private MelFrequencyAnalysis() {
+	}
 
 	public static Signatures getSignatures(Sound sound, int signatureSize) {
 		return getSignatures(sound, 48, 128, signatureSize);

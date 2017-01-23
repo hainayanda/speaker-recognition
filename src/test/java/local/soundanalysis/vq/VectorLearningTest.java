@@ -33,27 +33,27 @@ public class VectorLearningTest {
 	@Test
 	public void testIsInVectors() {
 		int error = 2;
-		expectedResult = new boolean[]{true, true, false, true, false};
-		for(int i = 0; i < vectors.length; i++){
-			assertEquals(learningCore.isInVectors(vectors[i], error),expectedResult[i]);
+		expectedResult = new boolean[] { true, true, false, true, false };
+		for (int i = 0; i < vectors.length; i++) {
+			assertEquals(learningCore.isInVectors(vectors[i], error), expectedResult[i]);
 		}
-		
+
 		error = 4;
-		expectedResult = new boolean[]{true, true, true, true, false};
-		for(int i = 0; i < vectors.length; i++){
-			assertEquals(learningCore.isInVectors(vectors[i], error),expectedResult[i]);
+		expectedResult = new boolean[] { true, true, true, true, false };
+		for (int i = 0; i < vectors.length; i++) {
+			assertEquals(learningCore.isInVectors(vectors[i], error), expectedResult[i]);
 		}
-		
+
 		error = 6;
-		expectedResult = new boolean[]{true, true, true, true, true};
-		for(int i = 0; i < vectors.length; i++){
-			assertEquals(learningCore.isInVectors(vectors[i], error),expectedResult[i]);
+		expectedResult = new boolean[] { true, true, true, true, true };
+		for (int i = 0; i < vectors.length; i++) {
+			assertEquals(learningCore.isInVectors(vectors[i], error), expectedResult[i]);
 		}
-		
+
 		error = 1;
-		expectedResult = new boolean[]{true, false, false, false, false};
-		for(int i = 0; i < vectors.length; i++){
-			assertEquals(learningCore.isInVectors(vectors[i], error),expectedResult[i]);
+		expectedResult = new boolean[] { true, false, false, false, false };
+		for (int i = 0; i < vectors.length; i++) {
+			assertEquals(learningCore.isInVectors(vectors[i], error), expectedResult[i]);
 		}
 	}
 }

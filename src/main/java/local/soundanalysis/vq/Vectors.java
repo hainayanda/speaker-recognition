@@ -6,92 +6,103 @@ import java.util.List;
 import local.soundanalysis.model.Signatures;
 
 public class Vectors {
-private int[] vectors;
-	
-	public Vectors(int[] vectors) throws IllegalArgumentException{
-		if(vectors == null) throw new IllegalArgumentException("Vectors cannot be null");
+	private int[] vectors;
+
+	public Vectors(int[] vectors) throws IllegalArgumentException {
+		if (vectors == null)
+			throw new IllegalArgumentException("Vectors cannot be null");
 		this.vectors = vectors;
 	}
-	
+
 	public int[] getVectors() {
 		return vectors;
 	}
-	
+
 	public int getVector(int index) throws IndexOutOfBoundsException {
-		if(index < length() && index >= 0)
+		if (index < length() && index >= 0)
 			return vectors[index];
-		else if(index >= length())
-			throw new IndexOutOfBoundsException("failed to get vector at index " + index + " because vectors length is " + length());
+		else if (index >= length())
+			throw new IndexOutOfBoundsException(
+					"failed to get vector at index " + index + " because vectors length is " + length());
 		else
-			throw new IndexOutOfBoundsException("failed to get vector at index " + index + " because index cannot be negative");
+			throw new IndexOutOfBoundsException(
+					"failed to get vector at index " + index + " because index cannot be negative");
 	}
-	
-	public int length(){
+
+	public int length() {
 		return vectors.length;
 	}
 
-	public boolean equals(Vectors vectors){
-		if(vectors.length() == this.length()){
-			for(int i = 0; i < length(); i++){
-				if(vectors.getVector(i) != getVector(i))
-					return false;
-			}
-			return true;
-		}
-		else
-			return false;
-	}
-	
-	public int difference(Vectors vectors){
+	public int difference(Vectors vectors) {
 		int diff = 0;
-		if(vectors.length() == this.length()){
-			for(int i = 0; i < length(); i++){
+		if (vectors.length() == this.length()) {
+			for (int i = 0; i < length(); i++) {
 				diff += Math.abs(vectors.getVector(i) - getVector(i));
 			}
 			return diff;
-		}
-		else
+		} else
 			return -1;
 	}
-	
-	public int minDifference(Vectors[] vectors){
+
+	public int minDifference(Vectors[] vectors) {
 		int diff = Integer.MAX_VALUE;
-		for(int i = 0; i < vectors.length; i++){
+		for (int i = 0; i < vectors.length; i++) {
 			int temp = difference(vectors[i]);
-			if(temp < diff && temp >= 0)
+			if (temp < diff && temp >= 0)
 				diff = temp;
 		}
 		return diff;
 	}
-	
-	public int minDifference(List<Vectors> vectors){
+
+	public int minDifference(List<Vectors> vectors) {
 		int diff = Integer.MAX_VALUE;
-		for(int i = 0; i < vectors.size(); i++){
+		for (int i = 0; i < vectors.size(); i++) {
 			int temp = difference(vectors.get(i));
-			if(temp < diff && temp >= 0)
+			if (temp < diff && temp >= 0)
 				diff = temp;
 		}
 		return diff;
 	}
-	
-	public static Vectors parseSignatures(Signatures signatures, double error){
+
+	public static Vectors parseSignatures(Signatures signatures, double error) {
 		return new Vectors(signaturesToVectors(signatures.getSignatures(), error));
 	}
-	
-    private static int[] signaturesToVectors(double[] signatures, double error){
-        int length = signatures.length;
-        int[] vector = new int[length];
-        for (int i = 0; i < length; i++){
-            if (signatures[i] == 0f)
-                vector[i] = 0;
-            else if (signatures[i] > 0f)
-                vector[i] = (int)(signatures[i] / error) + 1;
-            else
-                vector[i] = (int)(signatures[i] / error) - 1;
-        }
-        return vector;
-    }
-    
+
+	private static int[] signaturesToVectors(double[] signatures, double error) {
+		int length = signatures.length;
+		int[] vector = new int[length];
+		for (int i = 0; i < length; i++) {
+			if (signatures[i] == 0f)
+				vector[i] = 0;
+			else if (signatures[i] > 0f)
+				vector[i] = (int) (signatures[i] / error) + 1;
+			else
+				vector[i] = (int) (signatures[i] / error) - 1;
+		}
+		return vector;
+	}
+
+	@Override
+	public boolean equals(Object x) {
+		if (x == null)
+			return false;
+		if (this.getClass() != x.getClass())
+			return false;
+		Vectors that = (Vectors) x;
+		return this.equals(that);
+	}
+
+	public boolean equals(Vectors vectors) {
+		if (vectors.length() == this.length()) {
+			for (int i = 0; i < length(); i++) {
+				if (vectors.getVector(i) != getVector(i))
+					return false;
+			}
+			return true;
+		} else
+			return false;
+	}
+
 	@Override
 	public String toString() {
 		return "Vectors [vectors=" + Arrays.toString(vectors) + "]";

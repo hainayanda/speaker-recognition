@@ -16,8 +16,9 @@ public class FourierTest {
 	public static void setup() {
 		signal = new double[1024];
 		for (int i = 0; i < 1024; i++) {
-			for (int j = 0; j < 256; j+=2)
-				signal[i] += (double)(1 / (double)(j + 1)) * Math.sin(2.0 * Math.PI * (double)(j + 1) * (double)i / sampleRate);
+			for (int j = 0; j < 256; j += 2)
+				signal[i] += (double) (1 / (double) (j + 1))
+						* Math.sin(2.0 * Math.PI * (double) (j + 1) * (double) i / sampleRate);
 		}
 		Printer.printDouble(signal, "signal.txt");
 	}

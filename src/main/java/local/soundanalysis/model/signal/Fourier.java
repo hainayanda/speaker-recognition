@@ -3,18 +3,19 @@ package local.soundanalysis.model.signal;
 import static local.soundanalysis.math.Operation.*;
 
 import local.soundanalysis.model.Complex;
+import local.soundanalysis.model.Signatures;
 
 public class Fourier {
 
 	private static final Complex ZERO = new Complex(0, 0);
-	
+
 	private Complex[] series;
 	private double sampleRate;
 	private double lowestFrequency;
 	private double highestFrequency;
 	private Spectra spectra;
-	
-	public Fourier(Complex[] series, double sampleRate){
+
+	public Fourier(Complex[] series, double sampleRate) {
 		setSeries(series);
 		setSampleRate(sampleRate);
 		calcSpectra();
@@ -23,32 +24,26 @@ public class Fourier {
 	public Complex[] getSeries() {
 		return series;
 	}
-	
-	private void setSeries(Complex[] series) throws IllegalArgumentException{
-		if(series == null) throw new IllegalArgumentException("series cannot be null");
+
+	private void setSeries(Complex[] series) throws IllegalArgumentException {
+		if (series == null)
+			throw new IllegalArgumentException("series cannot be null");
 		this.series = series;
 		calcFrequency();
 	}
-	
-	private void setSampleRate(double sampleRate) throws IllegalArgumentException{
-		if(sampleRate <= 0) throw new IllegalArgumentException("sampleRate must be greater than zero, you are trying to input " + sampleRate + " as sampleRate parameter");
+
+	private void setSampleRate(double sampleRate) throws IllegalArgumentException {
+		if (sampleRate <= 0)
+			throw new IllegalArgumentException("sampleRate must be greater than zero, you are trying to input "
+					+ sampleRate + " as sampleRate parameter");
 		this.sampleRate = sampleRate;
 		calcFrequency();
 	}
-	
+
 	public double getSampleRate() {
 		return sampleRate;
 	}
-	
-	public int seriesLength(){
-		return series.length;
-	}
-	
-	private void calcSpectra(){
-		double[] spectrum = Complex.getAmplitude(this.series);
-		this.spectra = new Spectra(this, spectrum);
-	}
-	
+
 	public double getLowestFrequency() {
 		return lowestFrequency;
 	}
@@ -56,48 +51,63 @@ public class Fourier {
 	public double getHighestFrequency() {
 		return highestFrequency;
 	}
-	
-	public double getFrequencyBand(){
+
+	public double getFrequencyBand() {
 		return lowestFrequency;
 	}
-	
-	private void calcFrequency(){
-		this.lowestFrequency = 1/(seriesLength() / sampleRate);
+
+	public int seriesLength() {
+		return series.length;
+	}
+
+	private void calcSpectra() {
+		double[] spectrum = Complex.getAmplitude(this.series);
+		this.spectra = new Spectra(this, spectrum);
+	}
+
+	private void calcFrequency() {
+		this.lowestFrequency = 1 / (seriesLength() / sampleRate);
 		this.highestFrequency = sampleRate / 2;
 	}
 
-	public void setComplexByFrequency(Complex complex, double frequency){
+	public void setComplexByFrequency(Complex complex, double frequency) {
 		this.series[getIndex(frequency)] = complex;
 		this.spectra.setAmplitude(complex.getAmplitude(), frequency);
 	}
-	
-	public Complex getComplexByFrequency(double frequency){
+
+	public Complex getComplexByFrequency(double frequency) {
 		return series[getIndex(frequency)];
 	}
-	
-	public void setComplexByIndex(Complex complex, int index){
+
+	public void setComplexByIndex(Complex complex, int index) {
 		this.series[index] = complex;
 		this.spectra.setAmplitude(complex.getAmplitude(), index);
 	}
-	
-	public Complex getComplexByIndex(int index){
+
+	public Complex getComplexByIndex(int index) {
 		return series[index];
 	}
-	
-	private static int getIndex(Fourier series, double frequency){
-		if(frequency < series.getLowestFrequency()) throw new IllegalArgumentException("you can't get complex number from frequency lower than nyquist frequency :" + series.getLowestFrequency() + " You are trying to get :" + frequency);
-		else if(frequency > series.getHighestFrequency()) throw new IllegalArgumentException("you can't get complex number from frequency higher than nyquist frequency :" + series.getHighestFrequency() + " You are trying to get :" + frequency);
-		
+
+	private static int getIndex(Fourier series, double frequency) {
+		if (frequency < series.getLowestFrequency())
+			throw new IllegalArgumentException(
+					"you can't get complex number from frequency lower than nyquist frequency :"
+							+ series.getLowestFrequency() + " You are trying to get :" + frequency);
+		else if (frequency > series.getHighestFrequency())
+			throw new IllegalArgumentException(
+					"you can't get complex number from frequency higher than nyquist frequency :"
+							+ series.getHighestFrequency() + " You are trying to get :" + frequency);
+
 		int start = 0;
-		if(isEven(series.seriesLength()))
+		if (isEven(series.seriesLength()))
 			start++;
 		return round(frequency / series.getFrequencyBand()) + start;
 	}
 
-	public int getIndex(double frequency){
+	public int getIndex(double frequency) {
 		return getIndex(this, frequency);
 	}
-	
+
 	public Spectra getSpectra() {
 		return spectra;
 	}
@@ -111,12 +121,12 @@ public class Fourier {
 		return series.getSpectra();
 	}
 
-	public static Fourier fastFourierTransform(Sound sound) {
-		return new Fourier(fastFourierTransform(sound.getSamples()), sound.getSampleRate());
-	}
-
 	public static double[] fastFourierTransformToSpectra(double[] samples) {
 		return Complex.getAmplitude(fastFourierTransform(samples));
+	}
+
+	public static Fourier fastFourierTransform(Sound sound) {
+		return new Fourier(fastFourierTransform(sound.getSamples()), sound.getSampleRate());
 	}
 
 	public static Complex[] fastFourierTransform(double[] samples) {
@@ -167,6 +177,30 @@ public class Fourier {
 		return series;
 	}
 
+	public static double[] reverseFourierTransform(Complex[] series) {
+		return reverseFourierTransform(Complex.getAmplitude(series));
+	}
+
+	public static Sound reverseFourierTransform(Fourier series) {
+		return new Sound(reverseFourierTransform(series.getSeries()), series.getSampleRate());
+	}
+
+	public static double[] reverseFourierTransform(double[] spectrum) {
+		double[] samples = new double[spectrum.length];
+		int i = 0;
+		int scale = spectrum.length / 2;
+		if (spectrum.length % 2 == 0)
+			i = 1;
+		while (i < spectrum.length) {
+			for (int j = 0; j < spectrum.length / 2; j++) {
+				samples[i] += (spectrum[j] / (double) scale)
+						* Math.sin((double) 2 * Math.PI * ((double) j / ((double) (spectrum.length))) * (double) i);
+			}
+			i++;
+		}
+		return samples;
+	}
+
 	public static Sound inverseFourierTransform(Fourier series) {
 		Complex[] complexSamples = inverseFourierTransform(series.getSeries());
 		double[] samples = Complex.getAmplitude(complexSamples);
@@ -192,30 +226,6 @@ public class Fourier {
 
 		return inverse;
 
-	}
-
-	public static double[] reverseFourierTransform(double[] spectrum) {
-		double[] samples = new double[spectrum.length];
-		int i = 0;
-		int scale = spectrum.length / 2;
-		if (spectrum.length % 2 == 0)
-			i = 1;
-		while (i < spectrum.length) {
-			for (int j = 0; j < spectrum.length / 2; j++) {
-				samples[i] += (spectrum[j] / (double) scale)
-						* Math.sin((double) 2 * Math.PI * ((double) j / ((double) (spectrum.length))) * (double) i);
-			}
-			i++;
-		}
-		return samples;
-	}
-	
-	public static double[] reverseFourierTransform(Complex[] series){
-		return reverseFourierTransform(Complex.getAmplitude(series));
-	}
-	
-	public static Sound reverseFourierTransform(Fourier series){
-		return new Sound(reverseFourierTransform(series.getSeries()), series.getSampleRate());
 	}
 
 	public static Complex[] complexConvolve(Complex[] firstFrame, Complex[] secondFrame) {
@@ -252,11 +262,25 @@ public class Fourier {
 	}
 
 	@Override
+	public boolean equals(Object x){
+			if (x == null)
+				return false;
+			if (this.getClass() != x.getClass())
+				return false;
+			Fourier that = (Fourier) x;
+			if (that.seriesLength() != this.seriesLength())
+				return false;
+			for (int i = 0; i < this.seriesLength(); i++) {
+				if (!(that.getComplexByIndex(i).equals(this.getComplexByIndex(i))))
+					return false;
+			}
+			return true;
+	}
+	
+	@Override
 	public String toString() {
 		return "Fourier [sampleRate=" + sampleRate + ", lowestFrequency=" + lowestFrequency + ", highestFrequency="
 				+ highestFrequency + "]";
 	}
-	
-	
 
 }

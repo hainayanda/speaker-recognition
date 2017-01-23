@@ -28,6 +28,25 @@ public class Main {
 	public static double lpcError = 0.1;
 	public static double mfccError = 0.1;
 
+	public static void main(String[] args) {
+		lpcLearningCore = new VectorLearning("lpc");
+		mfccLearningCore = new VectorLearning("mfcc");
+	
+		@SuppressWarnings("resource")
+		Scanner scanner = new Scanner(System.in);
+		while (true) {
+			System.out.println("enter l to learn, enter t to test");
+			String input = scanner.next();
+			input.toLowerCase();
+			if (input.equals("l"))
+				learn(recordSignatures());
+			else if (input.equals("t"))
+				test(recordSignatures());
+	
+		}
+	
+	}
+
 	public static Signatures[] recordSignatures() {
 		Signatures mfcc = null;
 		Coeficients lpc = null;
@@ -57,7 +76,7 @@ public class Main {
 			e.printStackTrace();
 		}
 		return new Signatures[] { lpc, mfcc };
-		
+
 	}
 
 	public static void learn(Signatures[] signatures) {
@@ -72,24 +91,5 @@ public class Main {
 		int lpcDiff = lpcLearningCore.vectorsDiff(Vectors.parseSignatures(signatures[0], lpcError));
 		int mfccDiff = mfccLearningCore.vectorsDiff(Vectors.parseSignatures(signatures[1], mfccError));
 		System.out.println("lpcDiff: " + lpcDiff + " mfccDiff: " + mfccDiff);
-	}
-
-	public static void main(String[] args) {
-		lpcLearningCore = new VectorLearning("lpc");
-		mfccLearningCore = new VectorLearning("mfcc");
-		
-		@SuppressWarnings("resource")
-		Scanner scanner = new Scanner(System.in);
-		while (true) {
-			System.out.println("enter l to learn, enter t to test");
-			String input = scanner.next();
-			input.toLowerCase();
-			if (input.equals("l"))
-				learn(recordSignatures());
-			else if (input.equals("t"))
-				test(recordSignatures());
-
-		}
-
 	}
 }
