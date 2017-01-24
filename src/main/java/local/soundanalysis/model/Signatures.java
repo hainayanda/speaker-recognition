@@ -1,8 +1,14 @@
 package local.soundanalysis.model;
 
+import java.io.Serializable;
 import java.util.Arrays;
 
-public class Signatures {
+public class Signatures implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 9209128309822334854L;
+	
 	private double[] signatures;
 
 	public Signatures(double[] signatures) throws IllegalArgumentException {
@@ -15,6 +21,34 @@ public class Signatures {
 		return signatures;
 	}
 
+	public Signatures merge(Signatures signatures){
+		return mergeSignatures(new Signatures[]{this,signatures});
+	}
+	
+	public static Signatures mergeSignatures(Signatures[] signatures){
+		double[][] newSignatures = new double[signatures.length][];
+		for(int i = 0; i < newSignatures.length; i++){
+			newSignatures[i] = signatures[i].getSignatures();
+		}
+		return new Signatures(mergeSignatures(newSignatures));
+	}
+	
+	private static double[] mergeSignatures(double[][] signatures) {
+		int length = 0;
+		for (int i = 0; i < signatures.length; i++) {
+			length += signatures[i].length;
+		}
+		double[] newSignatures = new double[length];
+		int index = 0;
+		for (int i = 0; i < signatures.length; i++) {
+			for (int j = 0; j < signatures[i].length; j++) {
+				newSignatures[index] = signatures[i][j];
+				index++;
+			}
+		}
+		return newSignatures;
+	}
+	
 	public double getSignature(int index) throws IndexOutOfBoundsException {
 		if (index < length() && index >= 0)
 			return signatures[index];
@@ -31,18 +65,24 @@ public class Signatures {
 	}
 
 	@Override
-	public boolean equals(Object x) {
-		if (x == null)
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(signatures);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
 			return false;
-		if (this.getClass() != x.getClass())
+		if (getClass() != obj.getClass())
 			return false;
-		Signatures that = (Signatures) x;
-		if (that.length() != this.length())
+		Signatures other = (Signatures) obj;
+		if (!Arrays.equals(signatures, other.signatures))
 			return false;
-		for (int i = 0; i < this.length(); i++) {
-			if (that.signatures[i] != this.signatures[i])
-				return false;
-		}
 		return true;
 	}
 

@@ -1,11 +1,17 @@
 package local.soundanalysis.vq;
 
+import java.io.Serializable;
 import java.util.Arrays;
 import java.util.List;
 
 import local.soundanalysis.model.Signatures;
 
-public class Vectors {
+public class Vectors implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1322969605634698082L;
+	
 	private int[] vectors;
 
 	public Vectors(int[] vectors) throws IllegalArgumentException {
@@ -83,24 +89,25 @@ public class Vectors {
 	}
 
 	@Override
-	public boolean equals(Object x) {
-		if (x == null)
-			return false;
-		if (this.getClass() != x.getClass())
-			return false;
-		Vectors that = (Vectors) x;
-		return this.equals(that);
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(vectors);
+		return result;
 	}
 
-	public boolean equals(Vectors vectors) {
-		if (vectors.length() == this.length()) {
-			for (int i = 0; i < length(); i++) {
-				if (vectors.getVector(i) != getVector(i))
-					return false;
-			}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
-		} else
+		if (obj == null)
 			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Vectors other = (Vectors) obj;
+		if (!Arrays.equals(vectors, other.vectors))
+			return false;
+		return true;
 	}
 
 	@Override

@@ -1,11 +1,6 @@
 package local.soundanalysis.machinelearning;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.deeplearning4j.nn.api.OptimizationAlgorithm;
-import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration.ListBuilder;
 import org.deeplearning4j.nn.conf.distribution.UniformDistribution;
@@ -16,14 +11,21 @@ import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
 import org.nd4j.linalg.activations.Activation;
+import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
+import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
-import local.soundanalysis.model.Coeficients;
-import local.soundanalysis.model.Signatures;
+import static local.soundanalysis.math.Operation.*;
 
-public class LearningCore {
+import java.io.Serializable;
 
+public class LearningCore implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4466988652812503977L;
+	
 	private int neuronIn;
 	private int neuronOut;
 	private MultiLayerNetwork neuralNet;
@@ -63,31 +65,78 @@ public class LearningCore {
 		return neuronOut;
 	}
 
-	public void learnNewSignature(Signatures[] signatures, int[] output) {
+	public void learnNewFeature(double[] features, double[] output) {
 		if (output.length != neuronOut)
 			throw new IllegalArgumentException("output length must be same as size of output neuron");
+		if (features.length != neuronIn)
+			throw new IllegalArgumentException("input length must be same as size of input neuron");
 
-		double[] input = mergeSignatures(signatures);
-		if (input.length != neuronIn)
-			throw new IllegalArgumentException("input length must be same aas size of input neuron");
-		
-		
+		INDArray input = Nd4j.create(new double[][] { features });
+		INDArray labels = Nd4j.create(new double[][] { output });
+		DataSet ds = new DataSet(input, labels);
+		neuralNet.fit(ds);
 	}
 
-	public static double[] mergeSignatures(Signatures[] signatures) {
-		int length = 0;
-		for (int i = 0; i < signatures.length; i++) {
-			length += signatures[i].length();
-		}
-		double[] newSignatures = new double[length];
-		int index = 0;
-		for (int i = 0; i < signatures.length; i++) {
-			for (int j = 0; j < signatures[i].length(); j++) {
-				newSignatures[index] = signatures[i].getSignature(j);
-				index++;
-			}
-		}
-		return newSignatures;
+	public void learnNewFeatures(double[][] features, double[][] output) {
+		if(!isArraysSimetric(features) || !isArraysSimetric(output))
+			throw new IllegalArgumentException("arrays must be simetrical in size");
+		if (output[0].length != neuronOut)
+			throw new IllegalArgumentException("output length must be same as size of output neuron");
+		if (features[0].length != neuronIn)
+			throw new IllegalArgumentException("input length must be same as size of input neuron");
+		
+		INDArray input = Nd4j.create(features);
+		INDArray labels = Nd4j.create(output);
+		DataSet ds = new DataSet(input, labels);
+		neuralNet.fit(ds);
 	}
 
+	public double[] test(double[] features){
+		if (features.length != neuronIn)
+			throw new IllegalArgumentException("input length must be same as size of input neuron");
+		INDArray test = Nd4j.create(new double[][] { features });
+		INDArray output = neuralNet.output(test);
+		return extractOutput(output, this.neuronOut);
+	}
+	
+	public static double[] extractOutput(INDArray output, int length){
+		double[] result = new double[length];
+		for(int i = 0; i < length; i++){
+			result[i] = output.getDouble(0, i);
+		}
+		return result;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((neuralNet == null) ? 0 : neuralNet.hashCode());
+		result = prime * result + neuronIn;
+		result = prime * result + neuronOut;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		LearningCore other = (LearningCore) obj;
+		if (neuralNet == null) {
+			if (other.neuralNet != null)
+				return false;
+		} else if (!neuralNet.equals(other.neuralNet))
+			return false;
+		if (neuronIn != other.neuronIn)
+			return false;
+		if (neuronOut != other.neuronOut)
+			return false;
+		return true;
+	}
+	
+	
 }

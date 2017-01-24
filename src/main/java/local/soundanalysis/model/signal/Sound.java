@@ -1,7 +1,14 @@
 package local.soundanalysis.model.signal;
 
-public class Sound {
+import java.io.Serializable;
+import java.util.Arrays;
 
+public class Sound implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -3801721118200438779L;
+	
 	private double[] samples;
 	private double sampleRate;
 
@@ -56,18 +63,29 @@ public class Sound {
 	}
 
 	@Override
-	public boolean equals(Object x) {
-		if (x == null)
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(sampleRate);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + Arrays.hashCode(samples);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
 			return false;
-		if (this.getClass() != x.getClass())
+		if (getClass() != obj.getClass())
 			return false;
-		Sound that = (Sound) x;
-		if (that.samplesLength() != this.samplesLength())
+		Sound other = (Sound) obj;
+		if (Double.doubleToLongBits(sampleRate) != Double.doubleToLongBits(other.sampleRate))
 			return false;
-		for (int i = 0; i < this.samplesLength(); i++) {
-			if (that.getSample(i) != this.getSample(i))
-				return false;
-		}
+		if (!Arrays.equals(samples, other.samples))
+			return false;
 		return true;
 	}
 

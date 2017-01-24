@@ -1,9 +1,15 @@
 package local.soundanalysis.model;
 
-public class Complex {
+import java.io.Serializable;
 
-	private double real; // the realPart part
-	private double imaginary; // the imaginaryPartinary part
+public class Complex implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2181914414777467494L;
+	
+	private double real; // the real part
+	private double imaginary; // the imaginary part
 
 	public static Complex Parse(double sample) {
 		return new Complex(sample, 0);
@@ -147,13 +153,31 @@ public class Complex {
 	}
 
 	@Override
-	public boolean equals(Object x) {
-		if (x == null)
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(imaginary);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(real);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
 			return false;
-		if (this.getClass() != x.getClass())
+		if (getClass() != obj.getClass())
 			return false;
-		Complex that = (Complex) x;
-		return (this.real == that.real) && (this.imaginary == that.imaginary);
+		Complex other = (Complex) obj;
+		if (Double.doubleToLongBits(imaginary) != Double.doubleToLongBits(other.imaginary))
+			return false;
+		if (Double.doubleToLongBits(real) != Double.doubleToLongBits(other.real))
+			return false;
+		return true;
 	}
 
 	public String toString() {

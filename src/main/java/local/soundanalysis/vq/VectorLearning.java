@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VectorLearning {
-
+public class VectorLearning{
+	
 	private List<Vectors> vectors;
 	private String name;
 

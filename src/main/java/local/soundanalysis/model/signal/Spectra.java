@@ -2,8 +2,15 @@ package local.soundanalysis.model.signal;
 
 import static local.soundanalysis.math.Operation.*;
 
-public class Spectra {
+import java.io.Serializable;
+import java.util.Arrays;
 
+public class Spectra implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 4548120935694838631L;
+	
 	private double[] spectrum;
 	private Fourier series;
 
@@ -90,18 +97,30 @@ public class Spectra {
 	}
 
 	@Override
-	public boolean equals(Object x) {
-		if (x == null)
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((series == null) ? 0 : series.hashCode());
+		result = prime * result + Arrays.hashCode(spectrum);
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
 			return false;
-		if (this.getClass() != x.getClass())
+		if (getClass() != obj.getClass())
 			return false;
-		Spectra that = (Spectra) x;
-		if (that.spectrumLength() != this.spectrumLength())
-			return false;
-		for (int i = 0; i < this.spectrumLength(); i++) {
-			if (that.getAmplitude(i) != (this.getAmplitude(i)))
+		Spectra other = (Spectra) obj;
+		if (series == null) {
+			if (other.series != null)
 				return false;
-		}
+		} else if (!series.equals(other.series))
+			return false;
+		if (!Arrays.equals(spectrum, other.spectrum))
+			return false;
 		return true;
 	}
 

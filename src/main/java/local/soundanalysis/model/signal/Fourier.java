@@ -2,9 +2,16 @@ package local.soundanalysis.model.signal;
 
 import static local.soundanalysis.math.Operation.*;
 
+import java.io.Serializable;
+import java.util.Arrays;
+
 import local.soundanalysis.model.Complex;
 
-public class Fourier {
+public class Fourier implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8911981418832598908L;
 
 	private static final Complex ZERO = new Complex(0, 0);
 
@@ -261,19 +268,44 @@ public class Fourier {
 	}
 
 	@Override
-	public boolean equals(Object x){
-			if (x == null)
-				return false;
-			if (this.getClass() != x.getClass())
-				return false;
-			Fourier that = (Fourier) x;
-			if (that.seriesLength() != this.seriesLength())
-				return false;
-			for (int i = 0; i < this.seriesLength(); i++) {
-				if (!(that.getComplexByIndex(i).equals(this.getComplexByIndex(i))))
-					return false;
-			}
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		long temp;
+		temp = Double.doubleToLongBits(highestFrequency);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(lowestFrequency);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		temp = Double.doubleToLongBits(sampleRate);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		result = prime * result + Arrays.hashCode(series);
+		result = prime * result + ((spectra == null) ? 0 : spectra.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
 			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Fourier other = (Fourier) obj;
+		if (Double.doubleToLongBits(highestFrequency) != Double.doubleToLongBits(other.highestFrequency))
+			return false;
+		if (Double.doubleToLongBits(lowestFrequency) != Double.doubleToLongBits(other.lowestFrequency))
+			return false;
+		if (Double.doubleToLongBits(sampleRate) != Double.doubleToLongBits(other.sampleRate))
+			return false;
+		if (!Arrays.equals(series, other.series))
+			return false;
+		if (spectra == null) {
+			if (other.spectra != null)
+				return false;
+		} else if (!spectra.equals(other.spectra))
+			return false;
+		return true;
 	}
 	
 	@Override

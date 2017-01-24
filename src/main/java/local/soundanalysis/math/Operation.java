@@ -97,4 +97,13 @@ public class Operation {
 			return temp;
 
 	}
+	
+	public static boolean isArraysSimetric(double[][] arrays){
+		int check = arrays[0].length;
+		for(int i = 1; i < arrays.length; i++){
+			if(arrays[i].length != check)
+				return false;
+		}
+		return true;
+	}
 }

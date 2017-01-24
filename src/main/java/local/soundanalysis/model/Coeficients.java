@@ -2,7 +2,12 @@ package local.soundanalysis.model;
 
 import java.util.Arrays;
 
-public class Coeficients extends Signatures {
+public class Coeficients extends Signatures{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 8188827507609377494L;
+	
 	private double error;
 
 	public Coeficients(double[] signatures, double error) throws IllegalArgumentException {
@@ -19,18 +24,28 @@ public class Coeficients extends Signatures {
 	}
 
 	@Override
-	public boolean equals(Object x) {
-		if (x == null)
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		long temp;
+		temp = Double.doubleToLongBits(error);
+		result = prime * result + (int) (temp ^ (temp >>> 32));
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
 			return false;
-		if (this.getClass() != x.getClass())
+		if (getClass() != obj.getClass())
 			return false;
-		Coeficients that = (Coeficients) x;
-		if (that.length() != this.length())
+		Coeficients other = (Coeficients) obj;
+		if (Double.doubleToLongBits(error) != Double.doubleToLongBits(other.error))
 			return false;
-		for (int i = 0; i < this.length(); i++) {
-			if (that.getSignature(i) != this.getSignature(i))
-				return false;
-		}
+		if(Arrays.equals(getSignatures(), other.getSignatures()))
+			return false;
 		return true;
 	}
 
