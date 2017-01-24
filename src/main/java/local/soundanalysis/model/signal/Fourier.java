@@ -3,7 +3,6 @@ package local.soundanalysis.model.signal;
 import static local.soundanalysis.math.Operation.*;
 
 import local.soundanalysis.model.Complex;
-import local.soundanalysis.model.Signatures;
 
 public class Fourier {
 

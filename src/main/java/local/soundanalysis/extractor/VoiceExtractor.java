@@ -12,6 +12,6 @@ public class VoiceExtractor implements SoundExtractor<Sound, Sound> {
 			throw new NullPointerException("sound cannot be null");
 		else if (sound.samplesLength() <= 0)
 			throw new IllegalArgumentException("sound length must be greater than 0");
-		return normalizer(silenceRemover(bandPass(sound, 60, 3000)));
+		return normalizer(silenceRemover(emaBandPass(sound, 60, 3000)));
 	}
 }

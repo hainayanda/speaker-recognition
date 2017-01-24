@@ -4,10 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.MultiLayerConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
+import org.deeplearning4j.nn.conf.NeuralNetConfiguration.ListBuilder;
+import org.deeplearning4j.nn.conf.distribution.UniformDistribution;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.OutputLayer;
+import org.deeplearning4j.nn.conf.layers.OutputLayer.Builder;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
@@ -15,46 +19,75 @@ import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
+import local.soundanalysis.model.Coeficients;
 import local.soundanalysis.model.Signatures;
 
 public class LearningCore {
 
-	private int numClasses = 2;
+	private int neuronIn;
+	private int neuronOut;
 	private MultiLayerNetwork neuralNet;
-	private int signatureSize;
-	private DataSet trainingData;
-	private List<String> names = new ArrayList<String>();
-	private List<Signatures> signatures;
 
-	public LearningCore(int seed, int iterations) {
-		MultiLayerConfiguration config = new NeuralNetConfiguration.Builder().seed(seed).iterations(iterations)
-				.activation(Activation.TANH).weightInit(WeightInit.XAVIER).learningRate(0.1).regularization(true)
-				.l2(1e-4).list().layer(0, new DenseLayer.Builder().nIn(signatureSize).nOut(numClasses).build())
-				.layer(1, new DenseLayer.Builder().nIn(numClasses).nOut(numClasses).build())
-				.layer(2,
-						new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
-								.activation(Activation.SOFTMAX).nIn(3).nOut(numClasses).build())
-				.backprop(true).pretrain(false).build();
-		neuralNet = new MultiLayerNetwork(config);
+	public LearningCore(int seed, int iterations, double learningRate, int neuronIn, int neuronOut, int neuronHidden)
+			throws IllegalArgumentException {
+		if (neuronIn <= 0 || seed <= 0 || iterations <= 0 || learningRate <= 0 || neuronOut <= 0 || neuronHidden <= 0)
+			throw new IllegalArgumentException("parameters must be greater than zero");
+
+		this.neuronIn = neuronIn;
+		this.neuronOut = neuronOut;
+
+		NeuralNetConfiguration.Builder builder = new NeuralNetConfiguration.Builder().iterations(iterations)
+				.learningRate(learningRate).seed(seed).useDropConnect(false)
+				.optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT).biasInit(0).miniBatch(false);
+
+		DenseLayer.Builder hiddenLayerBuilder = new DenseLayer.Builder().nIn(neuronIn).nOut(neuronHidden)
+				.activation(Activation.SIGMOID).weightInit(WeightInit.DISTRIBUTION).dist(new UniformDistribution(0, 1));
+
+		Builder outputLayerBuilder = new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
+				.nIn(neuronHidden).nOut(neuronOut).activation(Activation.SOFTMAX).weightInit(WeightInit.DISTRIBUTION)
+				.dist(new UniformDistribution(0, 1));
+
+		ListBuilder listBuilder = builder.list().layer(0, hiddenLayerBuilder.build())
+				.layer(1, outputLayerBuilder.build()).pretrain(false).backprop(true);
+
+		neuralNet = new MultiLayerNetwork(listBuilder.build());
 		neuralNet.init();
 		neuralNet.setListeners(new ScoreIterationListener(100));
 	}
 
-	public void learnNewSignature(Signatures signature, String name) {
-		neuralNet.fit(trainingData);
+	public int sizeOfInput() {
+		return neuronIn;
 	}
 
-	public void learnExistedSignature(Signatures signature, String name) {
-
+	public int sizeOfOutput() {
+		return neuronOut;
 	}
 
-	private DataSet createDataSet(Map<Signatures, Integer> map, List<String> label) {
-		double[][] input = new double[map.size()][];
-		int[] output = new int[label.size()];
-		for (int i = 0; i < input.length; i++) {
+	public void learnNewSignature(Signatures[] signatures, int[] output) {
+		if (output.length != neuronOut)
+			throw new IllegalArgumentException("output length must be same as size of output neuron");
 
+		double[] input = mergeSignatures(signatures);
+		if (input.length != neuronIn)
+			throw new IllegalArgumentException("input length must be same aas size of input neuron");
+		
+		
+	}
+
+	public static double[] mergeSignatures(Signatures[] signatures) {
+		int length = 0;
+		for (int i = 0; i < signatures.length; i++) {
+			length += signatures[i].length();
 		}
-
-		return null;
+		double[] newSignatures = new double[length];
+		int index = 0;
+		for (int i = 0; i < signatures.length; i++) {
+			for (int j = 0; j < signatures[i].length(); j++) {
+				newSignatures[index] = signatures[i].getSignature(j);
+				index++;
+			}
+		}
+		return newSignatures;
 	}
+
 }

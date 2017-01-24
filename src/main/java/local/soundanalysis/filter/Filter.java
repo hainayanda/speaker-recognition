@@ -15,7 +15,7 @@ public class Filter {
 	private Filter() {
 	}
 
-	public static Sound bandPass(Sound sound, double lowCutOff, double highCutOff)
+	public static Sound emaBandPass(Sound sound, double lowCutOff, double highCutOff)
 			throws OperationNotSupportedException {
 		highCutOff /= sound.getSampleRate();
 		lowCutOff /= sound.getSampleRate();
@@ -44,6 +44,10 @@ public class Filter {
 		return new Sound(bandStop, sound.getSampleRate());
 	}
 
+	public static Sound spectralBandPass(Sound sound, double lowCutOff, double highCutOff){
+		return null;
+	};
+	
 	public static Sound silenceRemover(Sound sound) {
 		int divider = (int) (((double) sound.samplesLength() / (double) sound.getSampleRate()) * 10);
 		if (divider == 0)
