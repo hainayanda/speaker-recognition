@@ -1,5 +1,11 @@
 package local;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.DecimalFormat;
 import java.util.Scanner;
 
@@ -32,18 +38,54 @@ public class DeepLearningLearn {
 	public static double mfccError = 0.05;
 
 	public static void main(String[] args) {
-		learningCore = new LearningCore(SEED, ITERATION, LEARNING_RATE, LPC_SIGNATURE_LENGTH + MFCC_SIGNATURE_LENGTH,
-				NEURON_OUT, 16);
+		learningCore = get();
+		if (learningCore == null)
+			learningCore = new LearningCore(SEED, ITERATION, LEARNING_RATE,
+					LPC_SIGNATURE_LENGTH + MFCC_SIGNATURE_LENGTH, NEURON_OUT, 16);
 		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
 		while (true) {
-			System.out.println("enter l to learn, enter t to test");
+			System.out.println("enter l to learn, enter t to test, enter s to save what machine has learnt");
 			String input = scanner.next();
 			input.toLowerCase();
 			if (input.equals("l"))
 				learn(recordSignatures());
 			else if (input.equals("t"))
 				test(recordSignatures());
+			else if (input.equals("s"))
+				save(learningCore);
+		}
+	}
+
+	@SuppressWarnings("resource")
+	private static void save(LearningCore learningCore) {
+		try {
+			FileOutputStream fOut = new FileOutputStream("learningCore.dat");
+			ObjectOutputStream objOut = new ObjectOutputStream(fOut);
+			objOut.writeObject(learningCore);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@SuppressWarnings("resource")
+	private static LearningCore get() {
+		try {
+			FileInputStream fIn = new FileInputStream("learningCore.dat");
+			ObjectInputStream objIn = new ObjectInputStream(fIn);
+			Object obj = objIn.readObject();
+			if (obj instanceof LearningCore)
+				return (LearningCore) obj;
+			else
+				return null;
+		} catch (FileNotFoundException e) {
+			return null;
+		} catch (ClassNotFoundException e) {
+			return null;
+		} catch (IOException e) {
+			return null;
 		}
 	}
 
