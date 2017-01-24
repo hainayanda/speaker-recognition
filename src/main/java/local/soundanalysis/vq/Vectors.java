@@ -6,6 +6,11 @@ import java.util.List;
 
 import local.soundanalysis.model.Signatures;
 
+/**
+ * 
+ * @author Nayanda Haberty - nayanda1@outlook.com
+ *
+ */
 public class Vectors implements Serializable{
 	/**
 	 * 
@@ -14,16 +19,31 @@ public class Vectors implements Serializable{
 	
 	private int[] vectors;
 
+	/**
+	 * 
+	 * @param vectors
+	 * @throws IllegalArgumentException
+	 */
 	public Vectors(int[] vectors) throws IllegalArgumentException {
 		if (vectors == null)
 			throw new IllegalArgumentException("Vectors cannot be null");
 		this.vectors = vectors;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int[] getVectors() {
 		return vectors;
 	}
 
+	/**
+	 * 
+	 * @param index
+	 * @return
+	 * @throws IndexOutOfBoundsException
+	 */
 	public int getVector(int index) throws IndexOutOfBoundsException {
 		if (index < length() && index >= 0)
 			return vectors[index];
@@ -35,10 +55,19 @@ public class Vectors implements Serializable{
 					"failed to get vector at index " + index + " because index cannot be negative");
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int length() {
 		return vectors.length;
 	}
 
+	/**
+	 * 
+	 * @param vectors
+	 * @return
+	 */
 	public int difference(Vectors vectors) {
 		int diff = 0;
 		if (vectors.length() == this.length()) {
@@ -50,6 +79,11 @@ public class Vectors implements Serializable{
 			return -1;
 	}
 
+	/**
+	 * 
+	 * @param vectors
+	 * @return
+	 */
 	public int minDifference(Vectors[] vectors) {
 		int diff = Integer.MAX_VALUE;
 		for (int i = 0; i < vectors.length; i++) {
@@ -60,6 +94,11 @@ public class Vectors implements Serializable{
 		return diff;
 	}
 
+	/**
+	 * 
+	 * @param vectors
+	 * @return
+	 */
 	public int minDifference(List<Vectors> vectors) {
 		int diff = Integer.MAX_VALUE;
 		for (int i = 0; i < vectors.size(); i++) {
@@ -70,10 +109,22 @@ public class Vectors implements Serializable{
 		return diff;
 	}
 
+	/**
+	 * 
+	 * @param signatures
+	 * @param error
+	 * @return
+	 */
 	public static Vectors parseSignatures(Signatures signatures, double error) {
 		return new Vectors(signaturesToVectors(signatures.getSignatures(), error));
 	}
 
+	/**
+	 * 
+	 * @param signatures
+	 * @param error
+	 * @return
+	 */
 	private static int[] signaturesToVectors(double[] signatures, double error) {
 		int length = signatures.length;
 		int[] vector = new int[length];

@@ -10,11 +10,24 @@ import local.soundanalysis.model.signal.Sound;
 import static local.soundanalysis.math.Operation.*;
 import static local.soundanalysis.util.Utils.*;
 
+/**
+ * 
+ * @author Nayanda Haberty - nayanda1@outlook.com
+ *
+ */
 public class Filter {
 
 	private Filter() {
 	}
 
+	/**
+	 * 
+	 * @param sound
+	 * @param lowCutOff
+	 * @param highCutOff
+	 * @return
+	 * @throws OperationNotSupportedException
+	 */
 	public static Sound emaBandPass(Sound sound, double lowCutOff, double highCutOff)
 			throws OperationNotSupportedException {
 		highCutOff /= sound.getSampleRate();
@@ -44,10 +57,22 @@ public class Filter {
 		return new Sound(bandStop, sound.getSampleRate());
 	}
 
+	/**
+	 * 
+	 * @param sound
+	 * @param lowCutOff
+	 * @param highCutOff
+	 * @return
+	 */
 	public static Sound spectralBandPass(Sound sound, double lowCutOff, double highCutOff){
 		return null;
 	};
 	
+	/**
+	 * 
+	 * @param sound
+	 * @return
+	 */
 	public static Sound silenceRemover(Sound sound) {
 		int divider = (int) (((double) sound.samplesLength() / (double) sound.getSampleRate()) * 10);
 		if (divider == 0)
@@ -63,12 +88,16 @@ public class Filter {
 		return new Sound(getArrayFromList(framesList, newSamplesLength), sound.getSampleRate());
 	}
 
+	/**
+	 * 
+	 * @param sound
+	 */
 	public static void removeSilence(Sound sound) {
 		Sound newSound = silenceRemover(sound);
 		sound.setSamples(newSound.getSamples(), newSound.getSampleRate());
 	}
 
-	public static double[] getFilterRatio(int range) {
+	private static double[] getFilterRatio(int range) {
 		double[] ratio = new double[range];
 		double divider = 2.0 / range;
 		for (int i = 0; i < range; i++) {

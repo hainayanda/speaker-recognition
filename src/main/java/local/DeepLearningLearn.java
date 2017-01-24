@@ -14,7 +14,7 @@ import local.soundanalysis.algorithm.MelFrequencyAnalysis;
 import local.soundanalysis.extractor.SoundExtractor;
 import local.soundanalysis.extractor.VoiceExtractor;
 import local.soundanalysis.machinelearning.LearningCore;
-import local.soundanalysis.model.Coeficients;
+import local.soundanalysis.model.Coefficients;
 import local.soundanalysis.model.Signatures;
 import local.soundanalysis.model.signal.Sound;
 import local.soundanalysis.util.AudioRecorder;
@@ -91,7 +91,7 @@ public class DeepLearningLearn {
 
 	public static Signatures recordSignatures() {
 		Signatures mfcc = null;
-		Coeficients lpc = null;
+		Coefficients lpc = null;
 		try {
 			System.out.println("Recording...");
 			Sound sound = AudioRecorder.record(SAMPLE_RATE, BIT_DEPTH, RECORDING_LENGTH);
@@ -106,8 +106,8 @@ public class DeepLearningLearn {
 			Printer.printSound(voice, "voice.txt");
 			Printer.printSpectrum(voice, "voiceSpectrum.txt");
 
-			mfcc = MelFrequencyAnalysis.getSignatures(voice, MFCC_SIGNATURE_LENGTH);
-			lpc = LinearPredictive.getSignatures(voice, LPC_SIGNATURE_LENGTH);
+			mfcc = MelFrequencyAnalysis.extractSignatures(voice, MFCC_SIGNATURE_LENGTH);
+			lpc = LinearPredictive.extractSignatures(voice, LPC_SIGNATURE_LENGTH);
 
 			System.out.println(mfcc.toString());
 			System.out.println(lpc.toString());

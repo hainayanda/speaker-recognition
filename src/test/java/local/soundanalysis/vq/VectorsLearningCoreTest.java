@@ -5,15 +5,15 @@ import static org.junit.Assert.*;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class VectorLearningTest {
+public class VectorsLearningCoreTest {
 
-	private static VectorLearning learningCore;
+	private static VectorsLearningCore learningCore;
 	private static Vectors[] vectors;
 	private static boolean[] expectedResult;
 
 	@BeforeClass
 	public static void setup() {
-		learningCore = new VectorLearning("test");
+		learningCore = new VectorsLearningCore("test");
 		learningCore.train(new Vectors(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
 		learningCore.train(new Vectors(new int[] { 1, 2, 3, 4, 5, 6, 7, 8, 9 }));
 		learningCore.train(new Vectors(new int[] { 1, 1, 3, 5, 5, 5, 7, 9, 9 }));

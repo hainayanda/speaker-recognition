@@ -2,11 +2,21 @@ package local.soundanalysis.filter;
 
 import local.soundanalysis.model.signal.Sound;
 
+/**
+ * 
+ * @author Nayanda Haberty - nayanda1@outlook.com
+ *
+ */
 public class Normalizer {
 
 	private Normalizer() {
 	}
 
+	/**
+	 * 
+	 * @param sound
+	 * @return
+	 */
 	public static Sound normalizer(Sound sound) {
 		double max = Double.MIN_VALUE;
 
@@ -23,6 +33,10 @@ public class Normalizer {
 		return new Sound(samples, sound.getSampleRate());
 	}
 
+	/**
+	 * 
+	 * @param sound
+	 */
 	public static void normalize(Sound sound) {
 		Sound normal = normalizer(sound);
 		sound.setSamples(normal.getSamples(), normal.getSampleRate());

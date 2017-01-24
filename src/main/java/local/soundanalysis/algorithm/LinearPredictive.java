@@ -1,15 +1,44 @@
 package local.soundanalysis.algorithm;
 
-import local.soundanalysis.model.Coeficients;
+import local.soundanalysis.model.Coefficients;
 import local.soundanalysis.model.signal.Sound;
 
+/**
+ * This is the class that contains functions to get Coeficient from given
+ * samples
+ * 
+ */
 public class LinearPredictive {
 
 	private LinearPredictive() {
 	}
 
-	public static Coeficients getSignatures(Sound sound, int signatureSize) {
-		double[] samples = sound.getSamples();
+	/**
+	 * Function to extract coefficients wrapped in Coefficients object from
+	 * given sound using Linear Predictive Coefficient algorithm
+	 * 
+	 * @param sound
+	 *            Sound object that contains samples
+	 * @param signatureSize
+	 *            size of coeficients you want to extract from sound
+	 * @return coefficients that wrapped in Coefficients object
+	 */
+	public static Coefficients extractSignatures(Sound sound, int signatureSize) {
+		return extractSignatures(sound.getSamples(), signatureSize);
+	}
+
+	/**
+	 * Function to extract coefficients wrapped in Coefficients object from
+	 * given samples using Linear Predictive Coefficient algorithm
+	 * 
+	 * @param samples
+	 *            array of doubles that contains samples. it must be normalize
+	 *            into -1 to 1
+	 * @param signatureSize
+	 *            size of coeficients you want to extract from sound
+	 * @return coeficients that wrapped in Coeficients object
+	 */
+	public static Coefficients extractSignatures(double[] samples, int signatureSize) {
 		double error = 0;
 		double[] coeficients = new double[signatureSize];
 		double[] autoCorrelation = new double[signatureSize + 1];
@@ -46,6 +75,6 @@ public class LinearPredictive {
 			error *= 1.0 - temp * temp;
 		}
 
-		return new Coeficients(coeficients, error);
+		return new Coefficients(coeficients, error);
 	}
 }

@@ -3,6 +3,11 @@ package local.soundanalysis.model.signal;
 import java.io.Serializable;
 import java.util.Arrays;
 
+/**
+ * 
+ * @author Nayanda Haberty - nayanda1@outlook.com
+ *
+ */
 public class Sound implements Serializable{
 	/**
 	 * 
@@ -12,24 +17,48 @@ public class Sound implements Serializable{
 	private double[] samples;
 	private double sampleRate;
 
+	/**
+	 * 
+	 * @param samples
+	 * @param sampleRate
+	 */
 	public Sound(double[] samples, double sampleRate) {
 		setSamples(samples);
 		setSampleRate(sampleRate);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double[] getSamples() {
 		return samples;
 	}
 
+	/**
+	 * 
+	 * @param index
+	 * @return
+	 */
 	public double getSample(int index) {
 		return samples[index];
 	}
 
+	/**
+	 * 
+	 * @param samples
+	 * @param sampleRate
+	 */
 	public void setSamples(double[] samples, double sampleRate) {
 		setSamples(samples);
 		setSampleRate(sampleRate);
 	}
 
+	/**
+	 * 
+	 * @param samples
+	 * @throws IllegalArgumentException
+	 */
 	public void setSamples(double[] samples) throws IllegalArgumentException {
 		if (samples == null)
 			throw new IllegalArgumentException("samples cannot be null");
@@ -45,10 +74,18 @@ public class Sound implements Serializable{
 		this.sampleRate = sampleRate;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getSampleRate() {
 		return sampleRate;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int samplesLength() {
 		return samples.length;
 	}

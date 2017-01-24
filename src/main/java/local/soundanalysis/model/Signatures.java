@@ -3,6 +3,11 @@ package local.soundanalysis.model;
 import java.io.Serializable;
 import java.util.Arrays;
 
+/**
+ * 
+ * @author Nayanda Haberty - nayanda1@outlook.com
+ *
+ */
 public class Signatures implements Serializable{
 	/**
 	 * 
@@ -11,20 +16,39 @@ public class Signatures implements Serializable{
 	
 	private double[] signatures;
 
+	/**
+	 * 
+	 * @param signatures
+	 * @throws IllegalArgumentException
+	 */
 	public Signatures(double[] signatures) throws IllegalArgumentException {
 		if (signatures == null)
 			throw new IllegalArgumentException("Signatures cannot be null");
 		this.signatures = signatures;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double[] getSignatures() {
 		return signatures;
 	}
 
+	/**
+	 * 
+	 * @param signatures
+	 * @return
+	 */
 	public Signatures merge(Signatures signatures){
 		return mergeSignatures(new Signatures[]{this,signatures});
 	}
 	
+	/**
+	 * 
+	 * @param signatures
+	 * @return
+	 */
 	public static Signatures mergeSignatures(Signatures[] signatures){
 		double[][] newSignatures = new double[signatures.length][];
 		for(int i = 0; i < newSignatures.length; i++){
@@ -49,6 +73,12 @@ public class Signatures implements Serializable{
 		return newSignatures;
 	}
 	
+	/**
+	 * 
+	 * @param index
+	 * @return
+	 * @throws IndexOutOfBoundsException
+	 */
 	public double getSignature(int index) throws IndexOutOfBoundsException {
 		if (index < length() && index >= 0)
 			return signatures[index];
@@ -60,6 +90,10 @@ public class Signatures implements Serializable{
 					"failed to get signature at index " + index + " because index cannot be negative");
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int length() {
 		return signatures.length;
 	}

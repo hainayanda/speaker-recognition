@@ -8,17 +8,37 @@ import java.text.DecimalFormat;
 import local.soundanalysis.model.signal.Fourier;
 import local.soundanalysis.model.signal.Sound;
 
+/**
+ * 
+ * @author Nayanda Haberty - nayanda1@outlook.com
+ *
+ */
 public class Printer {
 
+	/**
+	 * 
+	 * @param sound
+	 * @param nameFile
+	 */
 	public static void printSound(Sound sound, String nameFile) {
 		printDouble(sound.getSamples(), nameFile);
 	}
 
+	/**
+	 * 
+	 * @param sound
+	 * @param nameFile
+	 */
 	public static void printSpectrum(Sound sound, String nameFile) {
 		Fourier series = Fourier.fastFourierTransform(sound);
 		printDouble(series.getSpectra().getSpectrum(), nameFile);
 	}
 
+	/**
+	 * 
+	 * @param samples
+	 * @param nameFile
+	 */
 	public static void printDouble(double[] samples, String nameFile) {
 		BufferedWriter writer = null;
 		int length = samples.length;
@@ -46,6 +66,11 @@ public class Printer {
 		}
 	}
 
+	/**
+	 * 
+	 * @param samples
+	 * @param nameFile
+	 */
 	public static void printBytes(byte[] samples, String nameFile) {
 		BufferedWriter writer = null;
 		int length = samples.length;

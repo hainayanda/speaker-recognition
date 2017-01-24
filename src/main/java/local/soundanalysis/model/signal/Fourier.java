@@ -7,6 +7,11 @@ import java.util.Arrays;
 
 import local.soundanalysis.model.Complex;
 
+/**
+ * 
+ * 
+ *
+ */
 public class Fourier implements Serializable{
 	/**
 	 * 
@@ -21,16 +26,30 @@ public class Fourier implements Serializable{
 	private double highestFrequency;
 	private Spectra spectra;
 
+	/**
+	 * 
+	 * @param series
+	 * @param sampleRate
+	 */
 	public Fourier(Complex[] series, double sampleRate) {
 		setSeries(series);
 		setSampleRate(sampleRate);
 		calcSpectra();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Complex[] getSeries() {
 		return series;
 	}
 
+	/**
+	 * 
+	 * @param series
+	 * @throws IllegalArgumentException
+	 */
 	private void setSeries(Complex[] series) throws IllegalArgumentException {
 		if (series == null)
 			throw new IllegalArgumentException("series cannot be null");
@@ -38,6 +57,11 @@ public class Fourier implements Serializable{
 		calcFrequency();
 	}
 
+	/**
+	 * 
+	 * @param sampleRate
+	 * @throws IllegalArgumentException
+	 */
 	private void setSampleRate(double sampleRate) throws IllegalArgumentException {
 		if (sampleRate <= 0)
 			throw new IllegalArgumentException("sampleRate must be greater than zero, you are trying to input "
@@ -46,22 +70,42 @@ public class Fourier implements Serializable{
 		calcFrequency();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getSampleRate() {
 		return sampleRate;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getLowestFrequency() {
 		return lowestFrequency;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getHighestFrequency() {
 		return highestFrequency;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getFrequencyBand() {
 		return lowestFrequency;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int seriesLength() {
 		return series.length;
 	}
@@ -76,20 +120,40 @@ public class Fourier implements Serializable{
 		this.highestFrequency = sampleRate / 2;
 	}
 
+	/**
+	 * 
+	 * @param complex
+	 * @param frequency
+	 */
 	public void setComplexByFrequency(Complex complex, double frequency) {
 		this.series[getIndex(frequency)] = complex;
 		this.spectra.setAmplitude(complex.getAmplitude(), frequency);
 	}
 
+	/**
+	 * 
+	 * @param frequency
+	 * @return
+	 */
 	public Complex getComplexByFrequency(double frequency) {
 		return series[getIndex(frequency)];
 	}
 
+	/**
+	 * 
+	 * @param complex
+	 * @param index
+	 */
 	public void setComplexByIndex(Complex complex, int index) {
 		this.series[index] = complex;
 		this.spectra.setAmplitude(complex.getAmplitude(), index);
 	}
 
+	/**
+	 * 
+	 * @param index
+	 * @return
+	 */
 	public Complex getComplexByIndex(int index) {
 		return series[index];
 	}
@@ -110,31 +174,64 @@ public class Fourier implements Serializable{
 		return round(frequency / series.getFrequencyBand()) + start;
 	}
 
+	/**
+	 * 
+	 * @param frequency
+	 * @return
+	 */
 	public int getIndex(double frequency) {
 		return getIndex(this, frequency);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Spectra getSpectra() {
 		return spectra;
 	}
 
+	/**
+	 * 
+	 * @param spectra
+	 */
 	public void setSpectra(Spectra spectra) {
 		this.spectra = spectra;
 	}
 
+	/**
+	 * 
+	 * @param sound
+	 * @return
+	 */
 	public static Spectra fastFourierTransformToSpectra(Sound sound) {
 		Fourier series = new Fourier(fastFourierTransform(sound.getSamples()), sound.getSampleRate());
 		return series.getSpectra();
 	}
 
+	/**
+	 * 
+	 * @param samples
+	 * @return
+	 */
 	public static double[] fastFourierTransformToSpectra(double[] samples) {
 		return Complex.getAmplitude(fastFourierTransform(samples));
 	}
 
+	/**
+	 * 
+	 * @param sound
+	 * @return
+	 */
 	public static Fourier fastFourierTransform(Sound sound) {
 		return new Fourier(fastFourierTransform(sound.getSamples()), sound.getSampleRate());
 	}
 
+	/**
+	 * 
+	 * @param samples
+	 * @return
+	 */
 	public static Complex[] fastFourierTransform(double[] samples) {
 		if (!isPowerOfTwo(samples.length)) {
 			int length = getNearestPowerOfTwo(samples.length);
@@ -151,6 +248,11 @@ public class Fourier implements Serializable{
 		}
 	}
 
+	/**
+	 * 
+	 * @param samples
+	 * @return
+	 */
 	public static Complex[] fastFourierTransform(Complex[] samples) {
 		int length = samples.length;
 
@@ -183,14 +285,29 @@ public class Fourier implements Serializable{
 		return series;
 	}
 
+	/**
+	 * 
+	 * @param series
+	 * @return
+	 */
 	public static double[] reverseFourierTransform(Complex[] series) {
 		return reverseFourierTransform(Complex.getAmplitude(series));
 	}
 
+	/**
+	 * 
+	 * @param series
+	 * @return
+	 */
 	public static Sound reverseFourierTransform(Fourier series) {
 		return new Sound(reverseFourierTransform(series.getSeries()), series.getSampleRate());
 	}
 
+	/**
+	 * 
+	 * @param spectrum
+	 * @return
+	 */
 	public static double[] reverseFourierTransform(double[] spectrum) {
 		double[] samples = new double[spectrum.length];
 		int i = 0;
@@ -207,12 +324,22 @@ public class Fourier implements Serializable{
 		return samples;
 	}
 
+	/**
+	 * 
+	 * @param series
+	 * @return
+	 */
 	public static Sound inverseFourierTransform(Fourier series) {
 		Complex[] complexSamples = inverseFourierTransform(series.getSeries());
 		double[] samples = Complex.getAmplitude(complexSamples);
 		return new Sound(samples, series.getSampleRate());
 	}
 
+	/**
+	 * 
+	 * @param series
+	 * @return
+	 */
 	public static Complex[] inverseFourierTransform(Complex[] series) {
 		int length = series.length;
 		Complex[] inverse = new Complex[length];
@@ -234,6 +361,12 @@ public class Fourier implements Serializable{
 
 	}
 
+	/**
+	 * 
+	 * @param firstFrame
+	 * @param secondFrame
+	 * @return
+	 */
 	public static Complex[] complexConvolve(Complex[] firstFrame, Complex[] secondFrame) {
 		if (firstFrame.length != secondFrame.length) {
 			throw new RuntimeException("Dimensions don't agree");
@@ -250,6 +383,12 @@ public class Fourier implements Serializable{
 		return inverseFourierTransform(temp);
 	}
 
+	/**
+	 * 
+	 * @param firstFrame
+	 * @param secondFrame
+	 * @return
+	 */
 	public static Complex[] convolve(Complex[] firstFrame, Complex[] secondFrame) {
 
 		Complex[] firstComplex = new Complex[2 * firstFrame.length];

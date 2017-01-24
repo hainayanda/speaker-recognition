@@ -2,11 +2,23 @@ package local.soundanalysis.util;
 
 import java.util.List;
 
+/**
+ * 
+ * @author Nayanda Haberty - nayanda1@outlook.com
+ *
+ */
 public class Utils {
 
 	private Utils() {
 	}
 
+	/**
+	 * 
+	 * @param list
+	 * @param reads
+	 * @param length
+	 * @return
+	 */
 	public static byte[] getByteArrayFromList(List<byte[]> list, List<Integer> reads, int length) {
 		byte[] bytes = new byte[length];
 		int pointer = 0;
@@ -20,6 +32,12 @@ public class Utils {
 		return bytes;
 	}
 
+	/**
+	 * 
+	 * @param list
+	 * @param length
+	 * @return
+	 */
 	public static double[] getArrayFromList(List<double[]> list, int length) {
 		double[] doubles = new double[length];
 		int pointer = 0;

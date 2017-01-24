@@ -2,6 +2,11 @@ package local.soundanalysis.model;
 
 import java.io.Serializable;
 
+/**
+ * 
+ * 
+ *
+ */
 public class Complex implements Serializable{
 	/**
 	 * 
@@ -11,10 +16,20 @@ public class Complex implements Serializable{
 	private double real; // the real part
 	private double imaginary; // the imaginary part
 
+	/**
+	 * 
+	 * @param sample
+	 * @return
+	 */
 	public static Complex Parse(double sample) {
 		return new Complex(sample, 0);
 	}
 
+	/**
+	 * 
+	 * @param samples
+	 * @return
+	 */
 	public static Complex[] Parse(double[] samples) {
 		int length = samples.length;
 		Complex[] ret = new Complex[length];
@@ -24,27 +39,53 @@ public class Complex implements Serializable{
 		return ret;
 	}
 
+	/**
+	 * 
+	 * @param realPart
+	 * @param imaginaryPart
+	 */
 	public Complex(double realPart, double imaginaryPart) {
 		this.real = realPart;
 		this.imaginary = imaginaryPart;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getReal() {
 		return real;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getImaginary() {
 		return imaginary;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double abs() {
 		return (double) Math.hypot(real, imaginary);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double phase() {
 		return (double) Math.atan2(imaginary, real);
 	}
 
+	/**
+	 * 
+	 * @param x
+	 * @return
+	 */
 	public Complex plus(Complex x) {
 		return plus(this, x);
 	}
@@ -56,6 +97,11 @@ public class Complex implements Serializable{
 		return sum;
 	}
 
+	/**
+	 * 
+	 * @param x
+	 * @return
+	 */
 	public Complex minus(Complex x) {
 		return minus(this, x);
 	}
@@ -66,6 +112,11 @@ public class Complex implements Serializable{
 		return new Complex(realPart, imaginaryPart);
 	}
 
+	/**
+	 * 
+	 * @param x
+	 * @return
+	 */
 	public Complex times(Complex x) {
 		return times(this, x);
 	}
@@ -76,14 +127,27 @@ public class Complex implements Serializable{
 		return new Complex(realPart, imaginaryPart);
 	}
 
+	/**
+	 * 
+	 * @param alpha
+	 * @return
+	 */
 	public Complex scale(double alpha) {
 		return new Complex(alpha * real, alpha * imaginary);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Complex conjugate() {
 		return new Complex(real, -imaginary);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Complex reciprocal() {
 		return reciprocal(this);
 	}
@@ -93,6 +157,11 @@ public class Complex implements Serializable{
 		return new Complex(x.real / scale, (-1 * x.imaginary) / scale);
 	}
 
+	/**
+	 * 
+	 * @param x
+	 * @return
+	 */
 	public Complex divides(Complex x) {
 		return divides(this, x);
 	}
@@ -101,6 +170,10 @@ public class Complex implements Serializable{
 		return times(a, reciprocal(b));
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Complex exp() {
 		return exp(this);
 	}
@@ -110,6 +183,10 @@ public class Complex implements Serializable{
 				(double) (Math.exp(x.real) * Math.sin(x.imaginary)));
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Complex sin() {
 		return sin(this);
 	}
@@ -119,6 +196,10 @@ public class Complex implements Serializable{
 				(double) (Math.cos(x.real) * Math.sinh(x.imaginary)));
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Complex cos() {
 		return cos(this);
 	}
@@ -128,6 +209,10 @@ public class Complex implements Serializable{
 				(double) (-Math.sin(x.real) * Math.sinh(x.imaginary)));
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Complex tan() {
 		return tan(this);
 	}
@@ -136,6 +221,10 @@ public class Complex implements Serializable{
 		return divides(sin(x), cos(x));
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getAmplitude() {
 		return getAmplitude(this);
 	}
@@ -144,6 +233,11 @@ public class Complex implements Serializable{
 		return Math.sqrt((x.imaginary * x.imaginary) + (x.real * x.real));
 	}
 
+	/**
+	 * 
+	 * @param c
+	 * @return
+	 */
 	public static double[] getAmplitude(Complex[] c) {
 		double[] amps = new double[c.length];
 		for (int i = 0; i < c.length; i++) {
@@ -179,7 +273,8 @@ public class Complex implements Serializable{
 			return false;
 		return true;
 	}
-
+	
+	@Override
 	public String toString() {
 		if (imaginary == 0)
 			return real + "";

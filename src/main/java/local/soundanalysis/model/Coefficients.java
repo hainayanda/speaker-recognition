@@ -2,7 +2,7 @@ package local.soundanalysis.model;
 
 import java.util.Arrays;
 
-public class Coeficients extends Signatures{
+public class Coefficients extends Signatures{
 	/**
 	 * 
 	 */
@@ -10,15 +10,29 @@ public class Coeficients extends Signatures{
 	
 	private double error;
 
-	public Coeficients(double[] signatures, double error) throws IllegalArgumentException {
+	/**
+	 * 
+	 * @param signatures
+	 * @param error
+	 * @throws IllegalArgumentException
+	 */
+	public Coefficients(double[] signatures, double error) throws IllegalArgumentException {
 		super(signatures);
 		this.error = error;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getError() {
 		return error;
 	}
 
+	/**
+	 * 
+	 * @param error
+	 */
 	public void setError(double error) {
 		this.error = error;
 	}
@@ -41,7 +55,7 @@ public class Coeficients extends Signatures{
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		Coeficients other = (Coeficients) obj;
+		Coefficients other = (Coefficients) obj;
 		if (Double.doubleToLongBits(error) != Double.doubleToLongBits(other.error))
 			return false;
 		if(Arrays.equals(getSignatures(), other.getSignatures()))

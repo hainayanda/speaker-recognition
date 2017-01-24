@@ -5,8 +5,16 @@ import static local.soundanalysis.filter.Normalizer.*;
 
 import local.soundanalysis.model.signal.Sound;
 
+/**
+ * 
+ * @author Nayanda Haberty - nayanda1@outlook.com
+ *
+ */
 public class VoiceExtractor implements SoundExtractor<Sound, Sound> {
 
+	/**
+	 * 
+	 */
 	public Sound extract(Sound sound) throws Exception {
 		if (sound == null)
 			throw new NullPointerException("sound cannot be null");

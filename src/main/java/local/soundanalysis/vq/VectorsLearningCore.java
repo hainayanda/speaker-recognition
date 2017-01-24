@@ -10,25 +10,46 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class VectorLearning{
+/**
+ * 
+ * @author Nayanda Haberty - nayanda1@outlook.com
+ *
+ */
+public class VectorsLearningCore{
 	
 	private List<Vectors> vectors;
 	private String name;
 
-	public VectorLearning(String name) {
+	/**
+	 * 
+	 * @param name
+	 */
+	public VectorsLearningCore(String name) {
 		this.vectors = getVectors(name);
 		this.name = name;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public String getName() {
 		return name;
 	}
 
+	/**
+	 * 
+	 * @param name
+	 */
 	public void setName(String name) {
 		if (name.length() > 0)
 			this.name = name;
 	}
 
+	/**
+	 * 
+	 * @param vector
+	 */
 	public void train(Vectors vector) {
 		if (!isInVectors(vector, 0)) {
 			vectors.add(vector);
@@ -36,22 +57,51 @@ public class VectorLearning{
 		}
 	}
 
+	/**
+	 * 
+	 * @param vector
+	 * @param error
+	 * @return
+	 */
 	public boolean isInVectors(Vectors vector, int error) {
 		return isInVectors(this.vectors, vector, error);
 	}
 
+	/**
+	 * 
+	 * @param vectors
+	 * @param vector
+	 * @param error
+	 * @return
+	 */
 	public static boolean isInVectors(List<Vectors> vectors, Vectors vector, int error) {
 		return (vector.minDifference(vectors) <= error * vector.length());
 	}
 
+	/**
+	 * 
+	 * @param vector
+	 * @return
+	 */
 	public int vectorsDiff(Vectors vector) {
 		return vectorsDiff(this.vectors, vector);
 	}
 
+	/**
+	 * 
+	 * @param vectors
+	 * @param vector
+	 * @return
+	 */
 	public static int vectorsDiff(List<Vectors> vectors, Vectors vector) {
 		return vector.minDifference(vectors) / vector.length();
 	}
 
+	/**
+	 * 
+	 * @param name
+	 * @return
+	 */
 	private static List<Vectors> getVectors(String name) {
 		String data = name + ".dat";
 		BufferedReader br = null;
@@ -85,6 +135,11 @@ public class VectorLearning{
 		return vectors;
 	}
 
+	/**
+	 * 
+	 * @param vectors
+	 * @param name
+	 */
 	private static void saveVectors(List<Vectors> vectors, String name) {
 		String data = vectorsToString(vectors);
 		try {
@@ -99,6 +154,11 @@ public class VectorLearning{
 		}
 	}
 
+	/**
+	 * 
+	 * @param vectors
+	 * @return
+	 */
 	private static String vectorsToString(List<Vectors> vectors) {
 		StringBuilder builder = new StringBuilder();
 		for (int i = 0; i < vectors.size(); i++) {

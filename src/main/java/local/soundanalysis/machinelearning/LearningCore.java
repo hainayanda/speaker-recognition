@@ -20,23 +20,38 @@ import static local.soundanalysis.math.Operation.*;
 
 import java.io.Serializable;
 
+/**
+ * 
+ * @author Nayanda Haberty - nayanda1@outlook.com
+ *
+ */
 public class LearningCore implements Serializable{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4466988652812503977L;
 	
-	private int neuronIn;
-	private int neuronOut;
+	private int sizeOfInput;
+	private int sizeOfOutput;
 	private MultiLayerNetwork neuralNet;
 
+	/**
+	 * 
+	 * @param seed
+	 * @param iterations
+	 * @param learningRate
+	 * @param neuronIn
+	 * @param neuronOut
+	 * @param neuronHidden
+	 * @throws IllegalArgumentException
+	 */
 	public LearningCore(int seed, int iterations, double learningRate, int neuronIn, int neuronOut, int neuronHidden)
 			throws IllegalArgumentException {
 		if (neuronIn <= 0 || seed <= 0 || iterations <= 0 || learningRate <= 0 || neuronOut <= 0 || neuronHidden <= 0)
 			throw new IllegalArgumentException("parameters must be greater than zero");
 
-		this.neuronIn = neuronIn;
-		this.neuronOut = neuronOut;
+		this.sizeOfInput = neuronIn;
+		this.sizeOfOutput = neuronOut;
 
 		NeuralNetConfiguration.Builder builder = new NeuralNetConfiguration.Builder().iterations(iterations)
 				.learningRate(learningRate).seed(seed).useDropConnect(false)
@@ -57,18 +72,31 @@ public class LearningCore implements Serializable{
 		neuralNet.setListeners(new ScoreIterationListener(100));
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int sizeOfInput() {
-		return neuronIn;
+		return sizeOfInput;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int sizeOfOutput() {
-		return neuronOut;
+		return sizeOfOutput;
 	}
 
+	/**
+	 * 
+	 * @param features
+	 * @param output
+	 */
 	public void learnNewFeature(double[] features, double[] output) {
-		if (output.length != neuronOut)
+		if (output.length != sizeOfOutput)
 			throw new IllegalArgumentException("output length must be same as size of output neuron");
-		if (features.length != neuronIn)
+		if (features.length != sizeOfInput)
 			throw new IllegalArgumentException("input length must be same as size of input neuron");
 
 		INDArray input = Nd4j.create(new double[][] { features });
@@ -77,12 +105,17 @@ public class LearningCore implements Serializable{
 		neuralNet.fit(ds);
 	}
 
+	/**
+	 * 
+	 * @param features
+	 * @param output
+	 */
 	public void learnNewFeatures(double[][] features, double[][] output) {
 		if(!isArraysSimetric(features) || !isArraysSimetric(output))
 			throw new IllegalArgumentException("arrays must be simetrical in size");
-		if (output[0].length != neuronOut)
+		if (output[0].length != sizeOfOutput)
 			throw new IllegalArgumentException("output length must be same as size of output neuron");
-		if (features[0].length != neuronIn)
+		if (features[0].length != sizeOfInput)
 			throw new IllegalArgumentException("input length must be same as size of input neuron");
 		
 		INDArray input = Nd4j.create(features);
@@ -91,14 +124,25 @@ public class LearningCore implements Serializable{
 		neuralNet.fit(ds);
 	}
 
+	/**
+	 * 
+	 * @param features
+	 * @return
+	 */
 	public double[] test(double[] features){
-		if (features.length != neuronIn)
+		if (features.length != sizeOfInput)
 			throw new IllegalArgumentException("input length must be same as size of input neuron");
 		INDArray test = Nd4j.create(new double[][] { features });
 		INDArray output = neuralNet.output(test);
-		return extractOutput(output, this.neuronOut);
+		return extractOutput(output, this.sizeOfOutput);
 	}
 	
+	/**
+	 * 
+	 * @param output
+	 * @param length
+	 * @return
+	 */
 	public static double[] extractOutput(INDArray output, int length){
 		double[] result = new double[length];
 		for(int i = 0; i < length; i++){
@@ -112,8 +156,8 @@ public class LearningCore implements Serializable{
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + ((neuralNet == null) ? 0 : neuralNet.hashCode());
-		result = prime * result + neuronIn;
-		result = prime * result + neuronOut;
+		result = prime * result + sizeOfInput;
+		result = prime * result + sizeOfOutput;
 		return result;
 	}
 
@@ -131,9 +175,9 @@ public class LearningCore implements Serializable{
 				return false;
 		} else if (!neuralNet.equals(other.neuralNet))
 			return false;
-		if (neuronIn != other.neuronIn)
+		if (sizeOfInput != other.sizeOfInput)
 			return false;
-		if (neuronOut != other.neuronOut)
+		if (sizeOfOutput != other.sizeOfOutput)
 			return false;
 		return true;
 	}

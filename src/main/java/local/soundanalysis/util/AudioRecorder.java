@@ -13,15 +13,33 @@ import local.soundanalysis.model.signal.Sound;
 
 import static local.soundanalysis.util.Utils.*;
 
+/**
+ * 
+ * @author Nayanda Haberty - nayanda1@outlook.com
+ *
+ */
 public class AudioRecorder {
 
 	private AudioRecorder() {
 	}
 
+	/**
+	 * 
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
 	public static Sound record() throws IllegalArgumentException {
 		return record(16000f, 16, 5);
 	}
 
+	/**
+	 * 
+	 * @param sampleRate
+	 * @param bitDepth
+	 * @param length
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
 	public static Sound record(float sampleRate, int bitDepth, int length) throws IllegalArgumentException {
 		if (bitDepth % 8 != 0)
 			throw new IllegalArgumentException("bitDepth parameter must be in byte size, you are trying to input "

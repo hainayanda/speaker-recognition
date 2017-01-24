@@ -5,6 +5,11 @@ import static local.soundanalysis.math.Operation.*;
 import java.io.Serializable;
 import java.util.Arrays;
 
+/**
+ * 
+ * @author Nayanda Haberty - nayanda1@outlook.com
+ *
+ */
 public class Spectra implements Serializable{
 	/**
 	 * 
@@ -19,14 +24,26 @@ public class Spectra implements Serializable{
 		setSpectrum(spectrum);
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public Fourier getSeries() {
 		return series;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double[] getSpectrum() {
 		return spectrum;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double[] getRealSpectrum() {
 		double[] spectrum = new double[spectrumLength() / 2];
 		int start = 0;
@@ -44,22 +61,42 @@ public class Spectra implements Serializable{
 		this.spectrum = series;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getSampleRate() {
 		return series.getSampleRate();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public int spectrumLength() {
 		return spectrum.length;
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getLowestFrequency() {
 		return series.getLowestFrequency();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getHighestFrequency() {
 		return series.getLowestFrequency();
 	}
 
+	/**
+	 * 
+	 * @return
+	 */
 	public double getFrequencyBand() {
 		return getLowestFrequency();
 	}
@@ -72,15 +109,34 @@ public class Spectra implements Serializable{
 		this.spectrum[index] = amplitude;
 	}
 
+	/**
+	 * 
+	 * @param frequency
+	 * @return
+	 */
 	public double getAmplitude(double frequency) {
 		return spectrum[getIndex(frequency)];
 	}
 
+	/**
+	 * 
+	 * @param index
+	 * @return
+	 */
 	public double getAmplitude(int index) {
 		return spectrum[index];
 	}
 
-	public static int getIndex(Spectra spectra, double frequency) {
+	/**
+	 * 
+	 * @param frequency
+	 * @return
+	 */
+	public int getIndex(double frequency) {
+		return getIndex(this, frequency);
+	}
+
+	private static int getIndex(Spectra spectra, double frequency) {
 		if (frequency < spectra.getLowestFrequency())
 			throw new IllegalArgumentException("you can't get amplitude from frequency lower than nyquist frequency");
 		else if (frequency > spectra.getHighestFrequency())
@@ -90,10 +146,6 @@ public class Spectra implements Serializable{
 		if (isEven(spectra.spectrumLength()))
 			start++;
 		return round(frequency / spectra.getFrequencyBand()) + start;
-	}
-
-	public int getIndex(double frequency) {
-		return getIndex(this, frequency);
 	}
 
 	@Override
