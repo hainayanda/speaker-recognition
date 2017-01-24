@@ -18,15 +18,15 @@ public class VectorQuantizationLearn {
 
 	public static final int LPC_SIGNATURE_LENGTH = 20;
 	public static final int MFCC_SIGNATURE_LENGTH = 13;
-	public static final float SAMPLE_RATE = 16000f;
+	public static final float SAMPLE_RATE = 22050f;
 	public static final int BIT_DEPTH = 16;
 	public static final int RECORDING_LENGTH = 5;
 
 	public static VectorLearning lpcLearningCore;
 	public static VectorLearning mfccLearningCore;
 
-	public static double lpcError = 0.1;
-	public static double mfccError = 0.1;
+	public static double lpcError = 0.05;
+	public static double mfccError = 0.5;
 
 	public static void main(String[] args) {
 		lpcLearningCore = new VectorLearning("lpc");
