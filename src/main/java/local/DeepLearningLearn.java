@@ -120,6 +120,8 @@ public class DeepLearningLearn {
 		df.setMaximumFractionDigits(2);
 		System.out.println(
 				"this voice have " + df.format(result[0] * 100.0) + "% possibility come from learned user's voices");
+		System.out.println(
+						"this voice have " + df.format(result[1] * 100.0) + "% possibility come from the others");
 	}
 
 }

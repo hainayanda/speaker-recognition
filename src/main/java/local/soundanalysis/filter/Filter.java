@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.naming.OperationNotSupportedException;
 
+import local.soundanalysis.model.signal.Fourier;
 import local.soundanalysis.model.signal.Sound;
 
 import static local.soundanalysis.math.Operation.*;
@@ -58,7 +59,11 @@ public class Filter {
 						+ " BAND PASS: " + bandPass + " SAMPLES: " + samples[i] + " ");
 
 		}
-
+		
+		if(!isInRange(bandStop)){
+			return new Sound(Normalizer.normalizer(bandStop), sound.getSampleRate());
+		}
+		
 		return new Sound(bandStop, sound.getSampleRate());
 	}
 
@@ -75,8 +80,46 @@ public class Filter {
 	 * @return sound filtered
 	 */
 	public static Sound spectralBandPass(Sound sound, double lowCutOff, double highCutOff) {
-		return null;
-	};
+		int range = (int) (sound.getSampleRate() / 10.0);
+		if (range * 3 > sound.samplesLength())
+			range = 2;
+		double[] ratio = getFilterRatio(range);
+		Fourier series = Fourier.fastFourierTransform(sound);
+		int low = series.getIndex(lowCutOff);
+		int high = series.getIndex(highCutOff);
+		int highMirror = sound.samplesLength() - high;
+		int lowMirror = sound.samplesLength() - low;
+
+		if (series.seriesLength() % 2 == 0) {
+			highMirror++;
+			lowMirror++;
+		}
+
+		for (int i = 0; i < ratio.length; i++) {
+			if (low - i >= 0 && low - i <= series.seriesLength() / 2) {
+				series.getComplexByIndex(low - i).scale(ratio[i]);
+				series.getComplexByIndex(lowMirror + i).scale(ratio[i]);
+			}
+			if (high + i >= 0 && high + i <= series.seriesLength() / 2) {
+				series.getComplexByIndex(high + i).scale(ratio[i]);
+				series.getComplexByIndex(highMirror - i).scale(ratio[i]);
+			}
+		}
+		
+		for(int i = 0; i < low - ratio.length; i++){
+			series.getComplexByIndex(i).scale(0);
+		}
+		
+		for(int i = series.seriesLength(); i > lowMirror + ratio.length; i--){
+			series.getComplexByIndex(i).scale(0);
+		}
+		
+		for(int i = high + 1; i < highMirror; i++){
+			series.getComplexByIndex(i).scale(0);
+		}
+		
+		return series.reverseFourierTransform();
+	}
 
 	/**
 	 * filter that remove silence contains in sound
@@ -112,6 +155,8 @@ public class Filter {
 	}
 
 	private static double[] getFilterRatio(int range) {
+		if (range < 2)
+			range = 2;
 		double[] ratio = new double[range];
 		double divider = 2.0 / range;
 		for (int i = 0; i < range; i++) {
@@ -125,4 +170,13 @@ public class Filter {
 		return ratio;
 	}
 
+	private static boolean isInRange(double[] samples) {
+		for (int i = 0; i < samples.length; i++) {
+			double test = Math.abs(samples[i]);
+			if (test > 1)
+				return false;
+		}
+		return true;
+	}
+	
 }

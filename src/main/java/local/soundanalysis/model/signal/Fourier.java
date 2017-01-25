@@ -287,6 +287,14 @@ public class Fourier implements Serializable{
 
 	/**
 	 * 
+	 * @return
+	 */
+	public Sound reverseFourierTransform() {
+		return reverseFourierTransform(this);
+	}
+
+	/**
+	 * 
 	 * @param series
 	 * @return
 	 */
