@@ -23,8 +23,8 @@ public class LinearPredictive {
 	 *            size of coeficients you want to extract from sound
 	 * @return coefficients that wrapped in Coefficients object
 	 */
-	public static Coefficients extractSignatures(Sound sound, int signatureSize) {
-		return extractSignatures(sound.getSamples(), signatureSize);
+	public static Coefficients extractCoefficients(Sound sound, int signatureSize) {
+		return extractCoefficients(sound.getSamples(), signatureSize);
 	}
 
 	/**
@@ -38,7 +38,7 @@ public class LinearPredictive {
 	 *            size of coeficients you want to extract from sound
 	 * @return coeficients that wrapped in Coeficients object
 	 */
-	public static Coefficients extractSignatures(double[] samples, int signatureSize) {
+	public static Coefficients extractCoefficients(double[] samples, int signatureSize) {
 		double error = 0;
 		double[] coeficients = new double[signatureSize];
 		double[] autoCorrelation = new double[signatureSize + 1];
@@ -61,7 +61,6 @@ public class LinearPredictive {
 			}
 			for (j = 0; j < i; j++)
 				temp -= coeficients[j] * autoCorrelation[i - j];
-
 			temp /= error;
 			coeficients[i] = temp;
 

@@ -21,16 +21,17 @@ import static local.soundanalysis.math.Operation.*;
 import java.io.Serializable;
 
 /**
+ * Class that implemented library from deeplearning4j
  * 
  * @author Nayanda Haberty - nayanda1@outlook.com
  *
  */
-public class LearningCore implements Serializable{
+public class LearningCore implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 4466988652812503977L;
-	
+
 	private int sizeOfInput;
 	private int sizeOfOutput;
 	private MultiLayerNetwork neuralNet;
@@ -111,13 +112,13 @@ public class LearningCore implements Serializable{
 	 * @param output
 	 */
 	public void learnNewFeatures(double[][] features, double[][] output) {
-		if(!isArraysSimetric(features) || !isArraysSimetric(output))
+		if (!isArraysSimetric(features) || !isArraysSimetric(output))
 			throw new IllegalArgumentException("arrays must be simetrical in size");
 		if (output[0].length != sizeOfOutput)
 			throw new IllegalArgumentException("output length must be same as size of output neuron");
 		if (features[0].length != sizeOfInput)
 			throw new IllegalArgumentException("input length must be same as size of input neuron");
-		
+
 		INDArray input = Nd4j.create(features);
 		INDArray labels = Nd4j.create(output);
 		DataSet ds = new DataSet(input, labels);
@@ -129,23 +130,17 @@ public class LearningCore implements Serializable{
 	 * @param features
 	 * @return
 	 */
-	public double[] test(double[] features){
+	public double[] test(double[] features) {
 		if (features.length != sizeOfInput)
 			throw new IllegalArgumentException("input length must be same as size of input neuron");
 		INDArray test = Nd4j.create(new double[][] { features });
 		INDArray output = neuralNet.output(test);
 		return extractOutput(output, this.sizeOfOutput);
 	}
-	
-	/**
-	 * 
-	 * @param output
-	 * @param length
-	 * @return
-	 */
-	public static double[] extractOutput(INDArray output, int length){
+
+	private static double[] extractOutput(INDArray output, int length) {
 		double[] result = new double[length];
-		for(int i = 0; i < length; i++){
+		for (int i = 0; i < length; i++) {
 			result[i] = output.getDouble(0, i);
 		}
 		return result;
@@ -181,6 +176,5 @@ public class LearningCore implements Serializable{
 			return false;
 		return true;
 	}
-	
-	
+
 }

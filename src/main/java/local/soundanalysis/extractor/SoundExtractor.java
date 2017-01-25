@@ -1,18 +1,23 @@
 package local.soundanalysis.extractor;
 
+import local.soundanalysis.model.signal.Sound;
+
 /**
+ * Interface to extract sound from data given
  * 
  * @author Nayanda Haberty - nayanda1@outlook.com
  *
- * @param <I>
- * @param <O>
+ * @param <T>
+ *            the output sound
  */
-public interface SoundExtractor<I, O> {
+public interface SoundExtractor<T> {
 	/**
+	 * method to extract sound from given input
 	 * 
 	 * @param input
-	 * @return
+	 *            the input data to be extracted
+	 * @return the output of sound extracted
 	 * @throws Exception
 	 */
-	public O extract(I input) throws Exception;
+	public Sound extract(T input) throws Exception;
 }

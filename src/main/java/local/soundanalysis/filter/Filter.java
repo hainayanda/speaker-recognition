@@ -11,6 +11,7 @@ import static local.soundanalysis.math.Operation.*;
 import static local.soundanalysis.util.Utils.*;
 
 /**
+ * This is the class that contains filter functions
  * 
  * @author Nayanda Haberty - nayanda1@outlook.com
  *
@@ -21,11 +22,15 @@ public class Filter {
 	}
 
 	/**
+	 * Simple band pass filter function
 	 * 
 	 * @param sound
+	 *            Sound object
 	 * @param lowCutOff
+	 *            desired low frequency cut off
 	 * @param highCutOff
-	 * @return
+	 *            desired high frequency cut off
+	 * @return sound filtered
 	 * @throws OperationNotSupportedException
 	 */
 	public static Sound emaBandPass(Sound sound, double lowCutOff, double highCutOff)
@@ -58,20 +63,27 @@ public class Filter {
 	}
 
 	/**
+	 * Band pass filter that using fourier transform, filter undesired frequency
+	 * and reverse it into signal
 	 * 
 	 * @param sound
+	 *            Sound object
 	 * @param lowCutOff
+	 *            desired low frequency cut off
 	 * @param highCutOff
-	 * @return
+	 *            desired high frequency cut off
+	 * @return sound filtered
 	 */
-	public static Sound spectralBandPass(Sound sound, double lowCutOff, double highCutOff){
+	public static Sound spectralBandPass(Sound sound, double lowCutOff, double highCutOff) {
 		return null;
 	};
-	
+
 	/**
+	 * filter that remove silence contains in sound
 	 * 
 	 * @param sound
-	 * @return
+	 *            Sound object
+	 * @return Sound object that silence removed
 	 */
 	public static Sound silenceRemover(Sound sound) {
 		int divider = (int) (((double) sound.samplesLength() / (double) sound.getSampleRate()) * 10);
@@ -89,8 +101,10 @@ public class Filter {
 	}
 
 	/**
+	 * filter that remove silence from sound given
 	 * 
 	 * @param sound
+	 *            Sound object
 	 */
 	public static void removeSilence(Sound sound) {
 		Sound newSound = silenceRemover(sound);

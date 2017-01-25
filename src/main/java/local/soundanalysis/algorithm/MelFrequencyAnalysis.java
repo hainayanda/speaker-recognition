@@ -18,54 +18,110 @@ public class MelFrequencyAnalysis {
 	}
 
 	/**
-	 * Function to extract coefficients wrapped in Coefficients object from
-	 * given samples using Mel-Frequency Cepstral Coefficients algorithm
+	 * Function to extract coefficients wrapped in Signatures object from given
+	 * samples using Mel-Frequency Cepstral Coefficients algorithm
+	 * 
 	 * @param sound
-	 * @param signatureSize
-	 * @return
+	 *            samples and sample rate wrapped in Sound object
+	 * @param coefficientsSize
+	 *            size of coefficient you want to extract
+	 * @return coefficients in wrapped in Signatures object
 	 */
-	public static Signatures extractSignatures(Sound sound, int signatureSize) {
-		return extractSignatures(sound, 48, 128, signatureSize);
+	public static Signatures extractCoefficients(Sound sound, int coefficientsSize) {
+		return extractCoefficients(sound, 48, 128, coefficientsSize);
 	}
 
 	/**
+	 * Function to extract coefficients wrapped in Signatures object from given
+	 * samples using Mel-Frequency Cepstral Coefficients algorithm
 	 * 
 	 * @param sound
+	 *            samples and sample rate wrapped in Sound object
 	 * @param filterSize
+	 *            size of filter
 	 * @param binSize
-	 * @param signatureSize
-	 * @return
+	 *            size of bin
+	 * @param coefficientsSize
+	 *            size of coefficient you want to extract
+	 * @return coefficients in wrapped in Signatures object
 	 */
-	public static Signatures extractSignatures(Sound sound, int filterSize, int binSize, int signatureSize) {
-		double[] mfcc = getFirstNCoefficient(fastFourierTransformToSpectra(sound), filterSize, binSize, signatureSize);
+	public static Signatures extractCoefficients(Sound sound, int filterSize, int binSize, int coefficientsSize) {
+		double[] mfcc = extractFirstNCoefficient(fastFourierTransformToSpectra(sound), filterSize, binSize,
+				coefficientsSize);
 		return new Signatures(mfcc);
 	}
 
 	/**
+	 * Function to extract coefficients wrapped in Signatures object from given
+	 * samples using Mel-Frequency Cepstral Coefficients algorithm
+	 * 
+	 * @param samples
+	 *            samples of signal you want to extract
+	 * @param sampleRate
+	 *            sample rate of signal
+	 * @param filterSize
+	 *            size of filter
+	 * @param binSize
+	 *            size of bin
+	 * @param coefficientsSize
+	 *            size of coefficients you want to extract
+	 * @return coefficients in wrapped in Signatures object
+	 */
+	public static Signatures extractCoefficients(double[] samples, double sampleRate, int filterSize, int binSize,
+			int coefficientsSize) {
+		double[] mfcc = extractFirstNCoefficient(fastFourierTransformToSpectra(samples), sampleRate, filterSize,
+				binSize, coefficientsSize);
+		return new Signatures(mfcc);
+	}
+
+	/**
+	 * Function to extract coefficients[0] - coefficients[n] wrapped in
+	 * Signatures object from given samples using Mel-Frequency Cepstral
+	 * Coefficients algorithm
 	 * 
 	 * @param spectra
+	 *            spectrum of signal
+	 * @param sampleRate
+	 *            signal sample rate
 	 * @param filterSize
+	 *            size of filter
 	 * @param binSize
-	 * @param coeficientSize
-	 * @return
+	 *            size of bin
+	 * @param coefficientsSize
+	 *            size of coefficients you want to extract
+	 * @return coefficients in wrapped in Signatures object
 	 */
-	public static double[] getFirstNCoefficient(Spectra spectra, int filterSize, int binSize, int coeficientSize) {
-		double[] coef = new double[coeficientSize];
-		for (int i = 0; i < coeficientSize; i++) {
-			coef[i] = getCoefficient(spectra, filterSize, binSize, i);
+	public static double[] extractFirstNCoefficient(double[] spectra, double sampleRate, int filterSize, int binSize,
+			int coefficientsSize) {
+		double[] coef = new double[coefficientsSize];
+		for (int i = 0; i < coefficientsSize; i++) {
+			coef[i] = extractCoefficient(spectra, sampleRate, filterSize, binSize, i);
 		}
 		return coef;
 	}
 
 	/**
+	 * Function to extract coefficients[0] - coefficients[n] wrapped in
+	 * Signatures object from given samples using Mel-Frequency Cepstral
+	 * Coefficients algorithm
 	 * 
 	 * @param spectra
+	 *            spectrum and sample rate of signal wrapped in Spectra object
 	 * @param filterSize
+	 *            size of filter
 	 * @param binSize
-	 * @param m
-	 * @return
+	 *            size of bin
+	 * @param coefficientsSize
+	 *            size of coefficients you want to extract
+	 * @return coefficients in wrapped in Signatures object
 	 */
-	public static double getCoefficient(Spectra spectra, int filterSize, int binSize, int m) {
+	public static double[] extractFirstNCoefficient(Spectra spectra, int filterSize, int binSize,
+			int coefficientsSize) {
+		return extractFirstNCoefficient(spectra.getSpectrum(), spectra.getSampleRate(), filterSize, binSize,
+				coefficientsSize);
+	}
+
+	private static double extractCoefficient(double[] spectra, double sampleRate, int filterSize, int binSize, int m) {
 		double result = 0.0f;
 		double outerSum = 0.0f;
 		double innerSum = 0.0f;
@@ -73,11 +129,10 @@ public class MelFrequencyAnalysis {
 			return 0.0f;
 		}
 		result = normalizationFactor(filterSize, m);
-		double[] spectrum = spectra.getSpectrum();
 		for (int i = 1; i <= filterSize; i++) {
 			innerSum = 0.0f;
 			for (int j = 0; j < binSize - 1; j++) {
-				innerSum += abs(spectrum[j] * getFilterParameter(spectra.getSampleRate(), binSize, j, i));
+				innerSum += abs(spectra[j] * getFilterParameter(sampleRate, binSize, j, i));
 			}
 			if (innerSum > 0.0f) {
 				innerSum = log(innerSum);
@@ -89,12 +144,6 @@ public class MelFrequencyAnalysis {
 		return result;
 	}
 
-	/**
-	 * 
-	 * @param filterSize
-	 * @param m
-	 * @return
-	 */
 	private static double normalizationFactor(int filterSize, int m) {
 		double normalizationFactor = 0.0f;
 		if (m == 0) {
@@ -105,14 +154,6 @@ public class MelFrequencyAnalysis {
 		return normalizationFactor;
 	}
 
-	/**
-	 * 
-	 * @param sampleRate
-	 * @param binSize
-	 * @param frequencyBand
-	 * @param filterBand
-	 * @return
-	 */
 	private static double getFilterParameter(double sampleRate, int binSize, int frequencyBand, int filterBand) {
 		double filterParameter = 0.0f;
 		double boundary = (frequencyBand * sampleRate) / binSize;
@@ -133,11 +174,6 @@ public class MelFrequencyAnalysis {
 		return filterParameter;
 	}
 
-	/**
-	 * 
-	 * @param filterBand
-	 * @return
-	 */
 	private static double getMagnitudeFactor(int filterBand) {
 		double magnitudeFactor = 0.0f;
 		if (filterBand >= 1 && filterBand <= 14) {
@@ -148,11 +184,6 @@ public class MelFrequencyAnalysis {
 		return magnitudeFactor;
 	}
 
-	/**
-	 * 
-	 * @param filterBand
-	 * @return
-	 */
 	private static double getCenterFrequency(int filterBand) {
 		double centerFrequency = 0.0f;
 		double exponent;
