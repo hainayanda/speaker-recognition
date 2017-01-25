@@ -5,8 +5,8 @@ import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration.ListBuilder;
 import org.deeplearning4j.nn.conf.distribution.UniformDistribution;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
-import org.deeplearning4j.nn.conf.layers.OutputLayer;
-import org.deeplearning4j.nn.conf.layers.OutputLayer.Builder;
+import org.deeplearning4j.nn.conf.layers.RnnOutputLayer;
+import org.deeplearning4j.nn.conf.layers.RnnOutputLayer.Builder;
 import org.deeplearning4j.nn.multilayer.MultiLayerNetwork;
 import org.deeplearning4j.nn.weights.WeightInit;
 import org.deeplearning4j.optimize.listeners.ScoreIterationListener;
@@ -15,6 +15,7 @@ import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
+import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 
 import static local.soundanalysis.math.Operation.*;
 
@@ -59,10 +60,10 @@ public class LearningCore implements Serializable {
 				.optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT).biasInit(0).miniBatch(false);
 
 		DenseLayer.Builder hiddenLayerBuilder = new DenseLayer.Builder().nIn(neuronIn).nOut(neuronHidden)
-				.activation(Activation.SIGMOID).weightInit(WeightInit.DISTRIBUTION).dist(new UniformDistribution(0, 1));
+				.activation(Activation.SIGMOID).weightInit(WeightInit.XAVIER).dist(new UniformDistribution(0, 1));
 
-		Builder outputLayerBuilder = new OutputLayer.Builder(LossFunctions.LossFunction.NEGATIVELOGLIKELIHOOD)
-				.nIn(neuronHidden).nOut(neuronOut).activation(Activation.SOFTMAX).weightInit(WeightInit.DISTRIBUTION)
+		Builder outputLayerBuilder = new RnnOutputLayer.Builder(LossFunction.MCXENT)
+				.nIn(neuronHidden).nOut(neuronOut).activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER)
 				.dist(new UniformDistribution(0, 1));
 
 		ListBuilder listBuilder = builder.list().layer(0, hiddenLayerBuilder.build())
