@@ -53,15 +53,16 @@ public class Operation {
 	/**
 	 * 
 	 * @param samples
-	 * @param divider
+	 * @param frameSize
 	 * @return
 	 */
-	public static double[][] getOverlapFrames(double[] samples, int divider){
-		if (divider <= 0)
-			throw new IllegalArgumentException("divider must be greater than 0");
-		double[][] frames = new double[(divider*2) - 1][];
-		for (int i = 0; i < (divider*2) - 1; i++) {
-			frames[i] = getOverlapFrame(samples, divider, i);
+	public static double[][] getOverlapFrames(double[] samples, int frameSize){
+		if (frameSize < 4)
+			throw new IllegalArgumentException("frameSize must be greater than 3");
+		int numberOfFrame = (((samples.length / frameSize) + 1)*2)-1;
+		double[][] frames = new double[numberOfFrame][];
+		for (int i = 0; i < numberOfFrame; i++) {
+			frames[i] = getOverlapFrame(samples, frameSize, i);
 		}
 		return frames;
 	}
@@ -73,9 +74,8 @@ public class Operation {
 	 * @param index
 	 * @return
 	 */
-	private static double[] getOverlapFrame(double[] samples, int divider, int index) {
-		int frameSize = samples.length / divider;
-		if (frameSize == 0)
+	private static double[] getOverlapFrame(double[] samples, int frameSize, int index) {
+		if (frameSize < 4)
 			throw new IllegalArgumentException("frameSize are too small");
 		double[] frame = new double[frameSize];
 		int startIndex = (frameSize / 2) * index;
@@ -84,7 +84,7 @@ public class Operation {
 			if (j < samples.length)
 				frame[i] = samples[j];
 			else
-				frame[i] = 0;
+				frame[i] = 0.0;
 		}
 		return frame;
 	}

@@ -30,7 +30,7 @@ public class VectorQuantizationLearn {
 	public static final int MFCC_SIGNATURE_LENGTH = 13;
 	public static final float SAMPLE_RATE = 22050f;
 	public static final int BIT_DEPTH = 16;
-	public static final int RECORDING_LENGTH = 5;
+	public static final int RECORDING_LENGTH = 3;
 
 	public static VectorsLearningCore lpcLearningCore;
 	public static VectorsLearningCore mfccLearningCore;

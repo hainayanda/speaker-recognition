@@ -39,7 +39,7 @@ public class LinearPredictive {
 		double[] signature = new double[signatureSize];
 		Coefficients temp = null;
 		
-		int windowSize = (int)sampleRate/24;
+		int windowSize = (int)(sampleRate*0.024);
 		if(!isPowerOfTwo(windowSize))
 			windowSize = getNearestPowerOfTwo(windowSize);
 		
@@ -48,7 +48,7 @@ public class LinearPredictive {
 		applyFunctionToFrames(frames, hammingFunction);
 		
 		int i = 0;
-		for(i = 0; i + windowSize <= frames.length; i++){
+		for(i = 0; i < frames.length; i++){
 			temp = linearPredictiveCoding(frames[i], signatureSize);
 			double[] coefficient = temp.getSignatures();
 			for(int j = 0; j < signatureSize; j++)
@@ -79,7 +79,7 @@ public class LinearPredictive {
 		for(int i = 1; i < signatureSize; i++){
 			double temp = autoCorrelation[i];
 			for(int j = 1; j < i; j++){
-				temp -= matrix[i - 1][j] * autoCorrelation[i = 1];
+				temp -= matrix[i - 1][j] * autoCorrelation[i - 1];
 			}
 			k[i] = temp / error[i - 1];
 			

@@ -24,7 +24,7 @@ public class DeepLearningLearn {
 	public static final int SEED = 128;
 	public static final int ITERATION = 1000;
 	public static final double LEARNING_RATE = 0.01;
-	public static final int NEURON_OUT = 2;
+	public static final int NEURON_OUT = 3;
 
 	public static VoiceLearningCore learningCore;
 
