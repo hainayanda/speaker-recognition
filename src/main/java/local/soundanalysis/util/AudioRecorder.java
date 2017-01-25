@@ -1,7 +1,7 @@
 package local.soundanalysis.util;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -11,7 +11,6 @@ import javax.sound.sampled.TargetDataLine;
 
 import local.soundanalysis.model.signal.Sound;
 
-import static local.soundanalysis.util.Utils.*;
 
 /**
  * 
@@ -63,22 +62,24 @@ public class AudioRecorder {
 
 			int bytesMaxSize = length * ((int) sampleRate * (bitDepth) / 8);
 			int bytesRead = 0;
-			List<byte[]> bytes = new LinkedList<byte[]>();
-			List<Integer> reads = new LinkedList<Integer>();
+			
+			ByteArrayOutputStream out = new ByteArrayOutputStream();
+			
 			microphone.start();
 			while (bytesRead < bytesMaxSize) {
 				data = new byte[microphone.getBufferSize() / 5];
 				numBytesRead = microphone.read(data, 0, CHUNK_SIZE);
 				bytesRead += numBytesRead;
-				reads.add(numBytesRead);
-				bytes.add(data);
+				out.write(data, 0, numBytesRead);
 			}
 			microphone.close();
-			byte[] sampleData = getByteArrayFromList(bytes, reads, bytesRead);
-
+			out.close();
+			byte[] sampleData = out.toByteArray();
 			double[] samples = getSamplesFromBytes(sampleData, bitDepth);
 			return new Sound(samples, (int) sampleRate);
 		} catch (LineUnavailableException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		return null;
@@ -91,6 +92,7 @@ public class AudioRecorder {
 			int temp = 0;
 			for (int j = 0; j < byteDepth; j++) {
 				int temp1 = (int) sampleData[j + (i * byteDepth)];
+				temp1 = temp1 & 0x000000FF;
 				temp1 = temp1 << (8 * j);
 				temp = temp | temp1;
 			}

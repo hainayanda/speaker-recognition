@@ -9,7 +9,6 @@ import local.soundanalysis.model.signal.Fourier;
 import local.soundanalysis.model.signal.Sound;
 
 import static local.soundanalysis.math.Operation.*;
-import static local.soundanalysis.util.Utils.*;
 
 /**
  * This is the class that contains filter functions
@@ -122,6 +121,17 @@ public class Filter {
 	}
 
 	/**
+	 * filter that remove silence from sound given
+	 * 
+	 * @param sound
+	 *            Sound object
+	 */
+	public static void removeSilence(Sound sound) {
+		Sound newSound = silenceRemover(sound);
+		sound.setSamples(newSound.getSamples(), newSound.getSampleRate());
+	}
+
+	/**
 	 * filter that remove silence contains in sound
 	 * 
 	 * @param sound
@@ -138,20 +148,31 @@ public class Filter {
 			if (average(absolute(frames[i])) > 0.02)
 				framesList.add(frames[i]);
 		}
-
+	
 		int newSamplesLength = framesList.size() * framesList.get(0).length;
-		return new Sound(getArrayFromList(framesList, newSamplesLength), sound.getSampleRate());
+		return new Sound(mergeFrames(framesList, newSamplesLength), sound.getSampleRate());
 	}
 
 	/**
-	 * filter that remove silence from sound given
 	 * 
-	 * @param sound
-	 *            Sound object
+	 * @param framesList
+	 * @param newSamplesLength
+	 * @return
 	 */
-	public static void removeSilence(Sound sound) {
-		Sound newSound = silenceRemover(sound);
-		sound.setSamples(newSound.getSamples(), newSound.getSampleRate());
+	public static double[] mergeFrames(List<double[]> framesList, int newSamplesLength) {
+		int length = 0;
+		for(int i = 0; i < framesList.size(); i++){
+			length += framesList.get(i).length;
+		}
+		int index = 0;
+		double[] samples = new double[length];
+		for(int i = 0; i < framesList.size(); i++){
+			for(int j = 0; j < framesList.get(i).length; j++){
+				samples[index] = framesList.get(index)[j];
+				index++;
+			}
+		}
+		return samples;
 	}
 
 	private static double[] getFilterRatio(int range) {
