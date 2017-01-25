@@ -58,17 +58,18 @@ public class Filter {
 						+ " BAND PASS: " + bandPass + " SAMPLES: " + samples[i] + " ");
 
 		}
-		
-		if(!isInRange(bandStop)){
+
+		if (!isInRange(bandStop)) {
 			return new Sound(Normalizer.normalizer(bandStop), sound.getSampleRate());
 		}
-		
+
 		return new Sound(bandStop, sound.getSampleRate());
 	}
 
 	/**
 	 * Band pass filter that using fourier transform, filter undesired frequency
-	 * and reverse it into signal
+	 * and reverse it into time domain signal. the process time is took so long
+	 * and not optimized
 	 * 
 	 * @param sound
 	 *            Sound object
@@ -104,19 +105,19 @@ public class Filter {
 				series.getComplexByIndex(highMirror - i).scale(ratio[i]);
 			}
 		}
-		
-		for(int i = 0; i < low - ratio.length; i++){
+
+		for (int i = 0; i < low - ratio.length; i++) {
 			series.getComplexByIndex(i).scale(0);
 		}
-		
-		for(int i = series.seriesLength(); i > lowMirror + ratio.length; i--){
+
+		for (int i = series.seriesLength(); i > lowMirror + ratio.length; i--) {
 			series.getComplexByIndex(i).scale(0);
 		}
-		
-		for(int i = high + 1; i < highMirror; i++){
+
+		for (int i = high + 1; i < highMirror; i++) {
 			series.getComplexByIndex(i).scale(0);
 		}
-		
+
 		return series.reverseFourierTransform();
 	}
 
@@ -148,7 +149,7 @@ public class Filter {
 			if (average(absolute(frames[i])) > 0.02)
 				framesList.add(frames[i]);
 		}
-	
+
 		int newSamplesLength = framesList.size() * framesList.get(0).length;
 		return new Sound(mergeFrames(framesList, newSamplesLength), sound.getSampleRate());
 	}
@@ -161,14 +162,14 @@ public class Filter {
 	 */
 	public static double[] mergeFrames(List<double[]> framesList, int newSamplesLength) {
 		int length = 0;
-		for(int i = 0; i < framesList.size(); i++){
+		for (int i = 0; i < framesList.size(); i++) {
 			length += framesList.get(i).length;
 		}
 		int index = 0;
 		double[] samples = new double[length];
-		for(int i = 0; i < framesList.size(); i++){
-			for(int j = 0; j < framesList.get(i).length; j++){
-				samples[index] = framesList.get(index)[j];
+		for (int i = 0; i < framesList.size(); i++) {
+			for (int j = 0; j < framesList.get(i).length; j++) {
+				samples[index] = framesList.get(i)[j];
 				index++;
 			}
 		}
@@ -199,5 +200,5 @@ public class Filter {
 		}
 		return true;
 	}
-	
+
 }

@@ -16,7 +16,7 @@ public interface SoundExtractor<T> {
 	 * 
 	 * @param input
 	 *            the input data to be extracted
-	 * @return the output of sound extracted
+	 * @return the sound extracted
 	 * @throws Exception
 	 */
 	public Sound extract(T input) throws Exception;

@@ -14,7 +14,6 @@ import org.nd4j.linalg.activations.Activation;
 import org.nd4j.linalg.api.ndarray.INDArray;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.factory.Nd4j;
-import org.nd4j.linalg.lossfunctions.LossFunctions;
 import org.nd4j.linalg.lossfunctions.LossFunctions.LossFunction;
 
 import static local.soundanalysis.math.Operation.*;
@@ -22,7 +21,8 @@ import static local.soundanalysis.math.Operation.*;
 import java.io.Serializable;
 
 /**
- * Class that implemented library from deeplearning4j
+ * Class that implemented deeplearning4j library. used for learning simple
+ * features using multilayer neural network
  * 
  * @author Nayanda Haberty - nayanda1@outlook.com
  *
@@ -38,13 +38,20 @@ public class LearningCore implements Serializable {
 	private MultiLayerNetwork neuralNet;
 
 	/**
+	 * Constructor to instantiate LearningCore
 	 * 
 	 * @param seed
+	 *            size of seed
 	 * @param iterations
+	 *            how much iterations for learning the new features
 	 * @param learningRate
+	 *            smaller means more details, bigger means faster processing
 	 * @param neuronIn
+	 *            number of input node
 	 * @param neuronOut
+	 *            number of output node
 	 * @param neuronHidden
+	 *            number of hidden node
 	 * @throws IllegalArgumentException
 	 */
 	public LearningCore(int seed, int iterations, double learningRate, int neuronIn, int neuronOut, int neuronHidden)
@@ -62,9 +69,8 @@ public class LearningCore implements Serializable {
 		DenseLayer.Builder hiddenLayerBuilder = new DenseLayer.Builder().nIn(neuronIn).nOut(neuronHidden)
 				.activation(Activation.SIGMOID).weightInit(WeightInit.XAVIER).dist(new UniformDistribution(0, 1));
 
-		Builder outputLayerBuilder = new RnnOutputLayer.Builder(LossFunction.MCXENT)
-				.nIn(neuronHidden).nOut(neuronOut).activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER)
-				.dist(new UniformDistribution(0, 1));
+		Builder outputLayerBuilder = new RnnOutputLayer.Builder(LossFunction.MCXENT).nIn(neuronHidden).nOut(neuronOut)
+				.activation(Activation.SOFTMAX).weightInit(WeightInit.XAVIER).dist(new UniformDistribution(0, 1));
 
 		ListBuilder listBuilder = builder.list().layer(0, hiddenLayerBuilder.build())
 				.layer(1, outputLayerBuilder.build()).pretrain(false).backprop(true);
@@ -75,25 +81,32 @@ public class LearningCore implements Serializable {
 	}
 
 	/**
+	 * Getter for input size
 	 * 
-	 * @return
+	 * @return size of input nodes
 	 */
-	public int sizeOfInput() {
+	public int getSizeOfInput() {
 		return sizeOfInput;
 	}
 
 	/**
+	 * Getter for output size
 	 * 
-	 * @return
+	 * @return size of output nodes
 	 */
-	public int sizeOfOutput() {
+	public int getSizeOfOutput() {
 		return sizeOfOutput;
 	}
 
 	/**
+	 * Method to learn new feature
 	 * 
 	 * @param features
+	 *            feature for learning, size of features must be same as input
+	 *            nodes
 	 * @param output
+	 *            the expected output, 1 means true, 0 means false. size of
+	 *            output must be same as output nodes
 	 */
 	public void learnNewFeature(double[] features, double[] output) {
 		if (output.length != sizeOfOutput)
@@ -108,9 +121,14 @@ public class LearningCore implements Serializable {
 	}
 
 	/**
+	 * Method to learn new features
 	 * 
 	 * @param features
+	 *            features for learning, size of individual feature must be same
+	 *            as input nodes
 	 * @param output
+	 *            the expected output, 1 means true, 0 means false. size of
+	 *            individual output must be same as output nodes
 	 */
 	public void learnNewFeatures(double[][] features, double[][] output) {
 		if (!isArraysSimetric(features) || !isArraysSimetric(output))
@@ -127,9 +145,13 @@ public class LearningCore implements Serializable {
 	}
 
 	/**
+	 * Methods to test the LearningCore
 	 * 
 	 * @param features
-	 * @return
+	 *            the features to test, size of features must be same as input
+	 *            nodes
+	 * @return results, if the result ~ 1 it means LearningCore recognize the
+	 *         results as one of learned features
 	 */
 	public double[] test(double[] features) {
 		if (features.length != sizeOfInput)

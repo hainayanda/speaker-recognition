@@ -52,6 +52,83 @@ public class Operation {
 
 	/**
 	 * 
+	 * @param samples
+	 * @param divider
+	 * @return
+	 */
+	public static double[][] getOverlapFrames(double[] samples, int divider){
+		if (divider <= 0)
+			throw new IllegalArgumentException("divider must be greater than 0");
+		double[][] frames = new double[(divider*2) - 1][];
+		for (int i = 0; i < (divider*2) - 1; i++) {
+			frames[i] = getOverlapFrame(samples, divider, i);
+		}
+		return frames;
+	}
+	
+	/**
+	 * 
+	 * @param samples
+	 * @param divider
+	 * @param index
+	 * @return
+	 */
+	private static double[] getOverlapFrame(double[] samples, int divider, int index) {
+		int frameSize = samples.length / divider;
+		if (frameSize == 0)
+			throw new IllegalArgumentException("frameSize are too small");
+		double[] frame = new double[frameSize];
+		int startIndex = (frameSize / 2) * index;
+		for (int i = 0; i < frameSize; i++) {
+			int j = i + startIndex;
+			if (j < samples.length)
+				frame[i] = samples[j];
+			else
+				frame[i] = 0;
+		}
+		return frame;
+	}
+	
+	/**
+	 * 
+	 * @param frames
+	 * @param hammingFunction
+	 * @return
+	 */
+	public static double[][] calculateFrames(double[][] frames, double[] function) {
+		if(!isArraysSimetric(frames)) throw new IllegalArgumentException("frames is not symetric in size");
+		else if(function.length != frames[0].length) throw new IllegalArgumentException("individual frames and function is not the same size");
+		
+		double[][] result = new double[frames.length][];
+		
+		for(int i = 0; i < frames.length; i++){
+			result[i] = new double[function.length];
+			for(int j = 0; j < function.length; j++){
+				result[i][j] = frames[i][j] * function[j];
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 
+	 * @param frames
+	 * @param function
+	 * @return
+	 */
+	public static void applyFunctionToFrames(double[][] frames, double[] function) {
+		if(!isArraysSimetric(frames)) throw new IllegalArgumentException("frames is not symetric in size");
+		else if(function.length != frames[0].length) throw new IllegalArgumentException("individual frames and function is not the same size");
+		
+		for(int i = 0; i < frames.length; i++){
+			for(int j = 0; j < function.length; j++){
+				frames[i][j] *= function[j];
+			}
+		}
+	}
+	
+	/**
+	 * 
 	 * @param data
 	 * @return
 	 */

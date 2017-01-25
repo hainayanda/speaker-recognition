@@ -10,7 +10,7 @@ import java.text.DecimalFormat;
 import java.util.Scanner;
 
 import local.soundanalysis.extractor.SoundExtractor;
-import local.soundanalysis.extractor.EmaVoiceExtractor;
+import local.soundanalysis.extractor.VoiceExtractor;
 import local.soundanalysis.machinelearning.VoiceLearningCore;
 import local.soundanalysis.model.signal.Sound;
 import local.soundanalysis.util.AudioRecorder;
@@ -93,7 +93,7 @@ public class DeepLearningLearn {
 			Printer.printSound(sound, "sound.txt");
 			Printer.printSpectrum(sound, "soundSpectrum.txt");
 
-			SoundExtractor<Sound> extractor = new EmaVoiceExtractor();
+			SoundExtractor<Sound> extractor = new VoiceExtractor();
 			voice = extractor.extract(sound);
 
 			Printer.printSound(voice, "voice.txt");

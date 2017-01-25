@@ -92,7 +92,6 @@ public class AudioRecorder {
 			int temp = 0;
 			for (int j = 0; j < byteDepth; j++) {
 				int temp1 = (int) sampleData[j + (i * byteDepth)];
-				temp1 = temp1 & 0x000000FF;
 				temp1 = temp1 << (8 * j);
 				temp = temp | temp1;
 			}

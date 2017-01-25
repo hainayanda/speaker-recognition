@@ -15,7 +15,7 @@ import java.util.Scanner;
 import local.soundanalysis.algorithm.LinearPredictive;
 import local.soundanalysis.algorithm.MelFrequencyAnalysis;
 import local.soundanalysis.extractor.SoundExtractor;
-import local.soundanalysis.extractor.EmaVoiceExtractor;
+import local.soundanalysis.extractor.VoiceExtractor;
 import local.soundanalysis.model.Coefficients;
 import local.soundanalysis.model.Signatures;
 import local.soundanalysis.model.signal.Sound;
@@ -67,7 +67,7 @@ public class VectorQuantizationLearn {
 			Printer.printSound(sound, "sound.txt");
 			Printer.printSpectrum(sound, "soundSpectrum.txt");
 
-			SoundExtractor<Sound> extractor = new EmaVoiceExtractor();
+			SoundExtractor<Sound> extractor = new VoiceExtractor();
 			Sound voice = extractor.extract(sound);
 
 			Printer.printSound(voice, "voice.txt");
@@ -76,14 +76,14 @@ public class VectorQuantizationLearn {
 			mfcc = MelFrequencyAnalysis.extractCoefficients(voice, MFCC_SIGNATURE_LENGTH);
 			lpc = LinearPredictive.extractCoefficients(voice, LPC_SIGNATURE_LENGTH);
 
-			List<double[]> mfccList = getDoublesFiles("mfccReal.dat");
-			List<double[]> lpcList = getDoublesFiles("lpcReal.dat");
+			List<double[]> mfccList = getDoublesFiles("mfccReal");
+			List<double[]> lpcList = getDoublesFiles("lpcReal");
 			
 			mfccList.add(mfcc.getSignatures());
 			lpcList.add(lpc.getSignatures());
 			
-			saveDoublesFiles(mfccList, "mfccReal.dat");
-			saveDoublesFiles(lpcList, "lpcReal.dat");
+			saveDoublesFiles(mfccList, "mfccReal");
+			saveDoublesFiles(lpcList, "lpcReal");
 			
 			System.out.println(mfcc.toString());
 			System.out.println(lpc.toString());

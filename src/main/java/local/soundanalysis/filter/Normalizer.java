@@ -25,9 +25,9 @@ public class Normalizer {
 	}
 
 	/**
-	 * 
-	 * @param samples
-	 * @return
+	 * Function to normalize samples
+	 * @param samples samples data to normalize
+	 * @return normalized samples
 	 */
 	public static double[] normalizer(double[] samples){
 		double max = Double.MIN_VALUE;
@@ -55,8 +55,8 @@ public class Normalizer {
 	}
 	
 	/**
-	 * 
-	 * @param samples
+	 * Function to normalize samples
+	 * @param samples samples data to normalized
 	 */
 	public static void normalize(double[] samples){
 		double max = Double.MIN_VALUE;

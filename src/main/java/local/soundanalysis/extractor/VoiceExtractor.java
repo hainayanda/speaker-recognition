@@ -12,7 +12,7 @@ import local.soundanalysis.model.signal.Sound;
  * @author Nayanda Haberty - nayanda1@outlook.com
  *
  */
-public class EmaVoiceExtractor implements SoundExtractor<Sound> {
+public class VoiceExtractor implements SoundExtractor<Sound> {
 
 	public Sound extract(Sound sound) throws Exception {
 		if (sound == null)
