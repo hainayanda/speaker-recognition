@@ -11,7 +11,6 @@ import javax.sound.sampled.TargetDataLine;
 
 import local.soundanalysis.model.signal.Sound;
 
-
 /**
  * 
  * @author Nayanda Haberty - nayanda1@outlook.com
@@ -62,9 +61,9 @@ public class AudioRecorder {
 
 			int bytesMaxSize = length * ((int) sampleRate * (bitDepth) / 8);
 			int bytesRead = 0;
-			
+
 			ByteArrayOutputStream out = new ByteArrayOutputStream();
-			
+
 			microphone.start();
 			while (bytesRead < bytesMaxSize) {
 				data = new byte[microphone.getBufferSize() / 5];
@@ -87,16 +86,40 @@ public class AudioRecorder {
 
 	private static double[] getSamplesFromBytes(byte[] sampleData, int bitDepth) {
 		int byteDepth = bitDepth / 8;
-		double[] samples = new double[sampleData.length / byteDepth];
-		for (int i = 0; i < samples.length; i++) {
-			int temp = 0;
-			for (int j = 0; j < byteDepth; j++) {
-				int temp1 = (int) sampleData[j + (i * byteDepth)];
-				temp1 = temp1 << (8 * j);
-				temp = temp | temp1;
-			}
-			samples[i] = ((double) temp) / (Math.pow(2, bitDepth));
+		if (byteDepth == 1)
+			return getSamplesFromOne(sampleData);
+		else if (byteDepth == 2)
+			return getSamplesFromTwo(sampleData);
+		else if (byteDepth == 4)
+			return getSamplesFomFour(sampleData);
+		else
+			throw new IllegalArgumentException("bitDepth invalid!");
+	}
+
+	private static double[] getSamplesFomFour(byte[] sampleData) {
+		double[] result = new double[sampleData.length / 4];
+		for (int i = 0; i < result.length; i++) {
+			int temp = (short) ((sampleData[i * 4] & 0xFF) | ((sampleData[i * 4 + 1] & 0xFF) << 8)
+					| ((sampleData[i * 4 + 2] & 0xFF) << 16) | ((sampleData[i * 4 + 3] & 0xFF) << 24));
+			result[i] = ((double) temp) / 4294967295.0;
 		}
-		return samples;
+		return result;
+	}
+
+	private static double[] getSamplesFromTwo(byte[] sampleData) {
+		double[] result = new double[sampleData.length / 2];
+		for (int i = 0; i < result.length; i++) {
+			short temp = (short) ((sampleData[i * 2] & 0xFF) | ((sampleData[i * 2 + 1] & 0xFF) << 8));
+			result[i] = ((double) temp) / 65535.0;
+		}
+		return result;
+	}
+
+	private static double[] getSamplesFromOne(byte[] sampleData) {
+		double[] result = new double[sampleData.length];
+		for (int i = 0; i < result.length; i++) {
+			result[i] = ((double) sampleData[i]) / 255.0;
+		}
+		return result;
 	}
 }

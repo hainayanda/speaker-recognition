@@ -74,7 +74,7 @@ public class VectorQuantizationLearn {
 			Printer.printSpectrum(voice, "voiceSpectrum.txt");
 
 			mfcc = MelFrequencyAnalysis.extractCoefficients(voice, MFCC_SIGNATURE_LENGTH);
-			lpc = LinearPredictive.extractCoefficients(voice, LPC_SIGNATURE_LENGTH);
+			lpc = LinearPredictive.extractCoefficientsIgnoreFirstZero(voice, LPC_SIGNATURE_LENGTH);
 
 			List<double[]> mfccList = getDoublesFiles("mfccReal");
 			List<double[]> lpcList = getDoublesFiles("lpcReal");

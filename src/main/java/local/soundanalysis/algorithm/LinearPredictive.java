@@ -30,6 +30,22 @@ public class LinearPredictive {
 
 	/**
 	 * 
+	 * @param sound
+	 * @param signatureSize
+	 * @return
+	 */
+	public static Coefficients extractCoefficientsIgnoreFirstZero(Sound sound, int signatureSize) {
+		Coefficients temp = extractCoefficients(sound.getSamples(), sound.getSampleRate(), signatureSize + 1);
+		double[] tmp = temp.getSignatures();
+		double[] result = new double[signatureSize];
+		for(int i = 0; i < signatureSize; i++){
+			result[i] = tmp[i+1];
+		}
+		return new Coefficients(result, temp.getError());
+	}
+	
+	/**
+	 * 
 	 * @param samples
 	 * @param sampleRate
 	 * @param signatureSize
@@ -62,7 +78,7 @@ public class LinearPredictive {
 		
 		return new Coefficients(signature, temp.getError());
 	}
-
+	
 	private static Coefficients linearPredictiveCoding(double[] frame, int signatureSize) {
 		double[] error = new double[signatureSize];
 		double[] k = new double[signatureSize];

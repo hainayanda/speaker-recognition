@@ -36,7 +36,7 @@ public class LPCLearning extends LearningCore{
 	 * @param output
 	 */
 	public void learnNewVoice(Sound sound, double[] output){
-		learnNewFeature(LinearPredictive.extractCoefficients(sound, 20).getSignatures(), output);
+		learnNewFeature(LinearPredictive.extractCoefficientsIgnoreFirstZero(sound, 20).getSignatures(), output);
 	}
 	
 	/**
@@ -47,7 +47,7 @@ public class LPCLearning extends LearningCore{
 	public void learnNewVoices(Sound[] sounds, double[][] output){
 		double[][] signatures = new double[sounds.length][];
 		for(int i = 0; i < sounds.length; i++){
-			signatures[i] = LinearPredictive.extractCoefficients(sounds[i], 20).getSignatures();
+			signatures[i] = LinearPredictive.extractCoefficientsIgnoreFirstZero(sounds[i], 20).getSignatures();
 		}
 		learnNewFeatures(signatures, output);
 	}
@@ -58,7 +58,7 @@ public class LPCLearning extends LearningCore{
 	 * @return
 	 */
 	public double[] testVoice(Sound sound){
-		return test(LinearPredictive.extractCoefficients(sound, 20).getSignatures());
+		return test(LinearPredictive.extractCoefficientsIgnoreFirstZero(sound, 20).getSignatures());
 	}
 	
 }
