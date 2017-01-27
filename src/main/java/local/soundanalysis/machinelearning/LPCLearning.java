@@ -14,9 +14,9 @@ public class LPCLearning extends LearningCore{
 	 */
 	private static final long serialVersionUID = -3513021652443945883L;
 
-	private LPCLearning(int seed, int iterations, double learningRate, int neuronIn, int neuronOut, int neuronHidden)
+	private LPCLearning(int seed, int iterations, double learningRate, int neuronIn, int neuronOut)
 			throws IllegalArgumentException {
-		super(seed, iterations, learningRate, neuronIn, neuronOut, neuronHidden);
+		super(seed, iterations, learningRate, neuronIn, neuronOut);
 	}
 
 	/**
@@ -27,7 +27,7 @@ public class LPCLearning extends LearningCore{
 	 * @param outputSize
 	 */
 	public LPCLearning(int seed, int iterations, double learningRate, int outputSize){
-		super(seed, iterations, learningRate, 20, outputSize, 40);
+		super(seed, iterations, learningRate, 20, outputSize);
 	}
 	
 	/**

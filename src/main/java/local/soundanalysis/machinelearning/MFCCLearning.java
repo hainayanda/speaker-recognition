@@ -24,9 +24,9 @@ public class MFCCLearning extends LearningCore{
 	 * @param neuronHidden
 	 * @throws IllegalArgumentException
 	 */
-	private MFCCLearning(int seed, int iterations, double learningRate, int neuronIn, int neuronOut, int neuronHidden)
+	private MFCCLearning(int seed, int iterations, double learningRate, int neuronIn, int neuronOut)
 			throws IllegalArgumentException {
-		super(seed, iterations, learningRate, neuronIn, neuronOut, neuronHidden);
+		super(seed, iterations, learningRate, neuronIn, neuronOut);
 	}
 
 	/**
@@ -37,7 +37,7 @@ public class MFCCLearning extends LearningCore{
 	 * @param outputSize
 	 */
 	public MFCCLearning(int seed, int iterations, double learningRate, int outputSize){
-		super(seed, iterations, learningRate, 13, outputSize, 26);
+		super(seed, iterations, learningRate, 13, outputSize);
 	}
 	
 	/**

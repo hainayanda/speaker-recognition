@@ -4,7 +4,6 @@ import org.deeplearning4j.nn.api.OptimizationAlgorithm;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration;
 import org.deeplearning4j.nn.conf.NeuralNetConfiguration.ListBuilder;
 import org.deeplearning4j.nn.conf.distribution.NormalDistribution;
-import org.deeplearning4j.nn.conf.distribution.UniformDistribution;
 import org.deeplearning4j.nn.conf.layers.DenseLayer;
 import org.deeplearning4j.nn.conf.layers.RnnOutputLayer;
 import org.deeplearning4j.nn.conf.layers.RnnOutputLayer.Builder;
@@ -55,22 +54,23 @@ public class LearningCore implements Serializable {
 	 *            number of hidden node
 	 * @throws IllegalArgumentException
 	 */
-	public LearningCore(int seed, int iterations, double learningRate, int neuronIn, int neuronOut, int neuronHidden)
+	public LearningCore(int seed, int iterations, double learningRate, int neuronIn, int neuronOut)
 			throws IllegalArgumentException {
-		if (neuronIn <= 0 || seed <= 0 || iterations <= 0 || learningRate <= 0 || neuronOut <= 0 || neuronHidden <= 0)
+		if (neuronIn <= 0 || seed <= 0 || iterations <= 0 || learningRate <= 0 || neuronOut <= 0)
 			throw new IllegalArgumentException("parameters must be greater than zero");
 
 		this.sizeOfInput = neuronIn;
 		this.sizeOfOutput = neuronOut;
 
+		int neuronHidden = ((neuronIn + neuronOut) * 2) / 3;
 		NeuralNetConfiguration.Builder builder = new NeuralNetConfiguration.Builder().iterations(iterations)
 				.learningRate(learningRate).seed(seed).useDropConnect(false)
 				.optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT).biasInit(0).miniBatch(false);
 
 		DenseLayer.Builder hiddenLayerBuilder = new DenseLayer.Builder().nIn(neuronIn).nOut(neuronHidden)
-				.activation(Activation.IDENTITY).weightInit(WeightInit.XAVIER).dist(new NormalDistribution(0.0, 1.0));
+				.activation(Activation.RELU).weightInit(WeightInit.RELU).dist(new NormalDistribution(0.0, 1.0));
 
-		Builder outputLayerBuilder = new RnnOutputLayer.Builder(LossFunction.MCXENT).nIn(neuronHidden).nOut(neuronOut)
+		Builder outputLayerBuilder = new RnnOutputLayer.Builder(LossFunction.NEGATIVELOGLIKELIHOOD).nIn(neuronHidden).nOut(neuronOut)
 				.activation(Activation.SIGMOID).weightInit(WeightInit.XAVIER).dist(new NormalDistribution(0.0, 1.0));
 
 		ListBuilder listBuilder = builder.list().layer(0, hiddenLayerBuilder.build())

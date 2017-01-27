@@ -176,6 +176,137 @@ public class Filter {
 		return samples;
 	}
 
+	/**
+	 * 
+	 * 
+	 * @param windowSize
+	 * @return
+	 */
+	public static double[] getHammingFunction(int windowSize) {
+		double[] factors = new double[windowSize];
+		for (int i = 0; i < windowSize; i++) {
+			factors[i] = 0.54d - (0.46d * Math.cos((Math.PI * 2 * i) / windowSize - 1));
+		}
+		return factors;
+	}
+	
+	/**
+	 * 
+	 * @param samples
+	 * @param divider
+	 * @param index
+	 * @return
+	 * @throws IllegalArgumentException
+	 */
+	public static double[] getFrame(double[] samples, int divider, int index) throws IllegalArgumentException {
+		int frameSize = samples.length / divider;
+		if (frameSize == 0)
+			throw new IllegalArgumentException("frameSize are too small");
+		double[] frame = new double[frameSize];
+		int startIndex = frameSize * index;
+		for (int i = 0; i < frameSize; i++) {
+			int j = i + startIndex;
+			if (j < samples.length)
+				frame[i] = samples[j];
+			else
+				frame[i] = 0;
+		}
+		return frame;
+	}
+
+	/**
+	 * 
+	 * @param samples
+	 * @param divider
+	 * @return
+	 */
+	public static double[][] getFrames(double[] samples, int divider) {
+		if (divider <= 0)
+			throw new IllegalArgumentException("divider must be greater than 0");
+		double[][] frames = new double[divider][];
+		for (int i = 0; i < divider; i++) {
+			frames[i] = getFrame(samples, divider, i);
+		}
+		return frames;
+	}
+
+	/**
+	 * 
+	 * @param samples
+	 * @param frameSize
+	 * @return
+	 */
+	public static double[][] getOverlapFrames(double[] samples, int frameSize){
+		if (frameSize < 4)
+			throw new IllegalArgumentException("frameSize must be greater than 3");
+		int numberOfFrame = (((samples.length / frameSize) + 1)*2)-1;
+		double[][] frames = new double[numberOfFrame][];
+		for (int i = 0; i < numberOfFrame; i++) {
+			frames[i] = getOverlapFrame(samples, frameSize, i);
+		}
+		return frames;
+	}
+	
+	/**
+	 * 
+	 * @param samples
+	 * @param divider
+	 * @param index
+	 * @return
+	 */
+	private static double[] getOverlapFrame(double[] samples, int frameSize, int index) {
+		if (frameSize < 4)
+			throw new IllegalArgumentException("frameSize are too small");
+		double[] frame = new double[frameSize];
+		int startIndex = (frameSize / 2) * index;
+		for (int i = 0; i < frameSize; i++) {
+			int j = i + startIndex;
+			if (j < samples.length)
+				frame[i] = samples[j];
+			else
+				frame[i] = 0.0;
+		}
+		return frame;
+	}
+	
+	/**
+	 * 
+	 * @param frames
+	 * @param hammingFunction
+	 * @return
+	 */
+	public static double[][] calculateFrames(double[][] frames, double[] function) {
+		if(!isArraysSimetric(frames)) throw new IllegalArgumentException("frames is not symetric in size");
+		else if(function.length != frames[0].length) throw new IllegalArgumentException("individual frames and function is not the same size");
+		
+		double[][] result = new double[frames.length][];
+		
+		for(int i = 0; i < frames.length; i++){
+			result[i] = new double[function.length];
+			for(int j = 0; j < function.length; j++){
+				result[i][j] = frames[i][j] * function[j];
+			}
+		}
+		return result;
+	}
+
+	/**
+	 * 
+	 * @param frames
+	 * @param function
+	 * @return
+	 */
+	public static void applyFunctionToFrames(double[][] frames, double[] function) {
+		if(!isArraysSimetric(frames)) throw new IllegalArgumentException("frames is not symetric in size");
+		else if(function.length != frames[0].length) throw new IllegalArgumentException("individual frames and function is not the same size");
+		
+		for(int i = 0; i < frames.length; i++){
+			for(int j = 0; j < function.length; j++){
+				frames[i][j] *= function[j];
+			}
+		}
+	}
+
 	private static double[] getFilterRatio(int range) {
 		if (range < 2)
 			range = 2;

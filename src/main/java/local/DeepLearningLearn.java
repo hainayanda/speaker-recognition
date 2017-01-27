@@ -23,7 +23,7 @@ public class DeepLearningLearn {
 	public static final int RECORDING_LENGTH = 5;
 	public static final int SEED = 128;
 	public static final int ITERATION = 1000;
-	public static final double LEARNING_RATE = 0.01;
+	public static final double LEARNING_RATE = 0.001;
 	public static final int NEURON_OUT = 2;
 
 	public static VoiceLearningCore learningCore;
@@ -39,11 +39,13 @@ public class DeepLearningLearn {
 		@SuppressWarnings("resource")
 		Scanner scanner = new Scanner(System.in);
 		while (true) {
-			System.out.println("enter l to learn, enter t to test, enter s to save what machine has learnt");
+			System.out.println("enter l1 to learn for subject 1, l2 to learn for subject 2, enter t to test, enter s to save what machine has learnt");
 			String input = scanner.next();
 			input.toLowerCase();
-			if (input.equals("l"))
-				learn(recordSignatures());
+			if (input.equals("l1"))
+				learn(recordSignatures(), 1);
+			else if (input.equals("l2"))
+					learn(recordSignatures(), 2);
 			else if (input.equals("t"))
 				test(recordSignatures());
 			else if (input.equals("s"))
@@ -107,9 +109,12 @@ public class DeepLearningLearn {
 		return voice;
 	}
 
-	public static void learn(Sound sound) {
+	public static void learn(Sound sound, int i) {
 		System.out.println("Learning....");
-		learningCore.learnNewVoice(sound, new double[] { 1, 0 });
+		if(i == 1)
+			learningCore.learnNewVoice(sound, new double[] { 1, 0 });
+		else
+			learningCore.learnNewVoice(sound, new double[] { 0, 1 });
 		System.out.println("Finished learning....");
 	}
 
@@ -119,9 +124,9 @@ public class DeepLearningLearn {
 		DecimalFormat df = new DecimalFormat("#.#");
 		df.setMaximumFractionDigits(2);
 		System.out.println(
-				"this voice have " + df.format(result[0] * 100.0) + "% possibility come from learned user's voices");
+				"this voice have " + df.format(result[0] * 100.0) + "% possibility come from subject 1 user's voices");
 		System.out.println(
-						"this voice have " + df.format(result[1] * 100.0) + "% possibility come from the others");
+						"this voice have " + df.format(result[1] * 100.0) + "% possibility come from subject 2 user's voices");
 	}
 
 }

@@ -3,7 +3,9 @@ package local.soundanalysis.algorithm;
 import local.soundanalysis.model.Coefficients;
 import local.soundanalysis.model.signal.Sound;
 
+import static local.soundanalysis.filter.Filter.*;
 import static local.soundanalysis.math.Operation.*;
+
 /**
  * This is the class that contains functions to get Coefficient from given
  * samples
@@ -125,13 +127,5 @@ public class LinearPredictive {
         for (int i = index; i < frame.length; i++)
             result += frame[i] * frame[i - index];
         return result;
-	}
-
-	private static double[] getHammingFunction(int windowSize) {
-            double[] factors = new double[windowSize];
-                for(int i = 0; i < windowSize; i++) {
-                    factors[i] = 0.54d - (0.46d * Math.cos((Math.PI * 2 * i) / windowSize - 1));
-                }
-            return factors;
 	}
 }

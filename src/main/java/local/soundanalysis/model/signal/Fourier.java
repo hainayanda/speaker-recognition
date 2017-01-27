@@ -220,6 +220,19 @@ public class Fourier implements Serializable{
 
 	/**
 	 * 
+	 * @param samples
+	 * @return
+	 */
+	public static double[][] fastFourierTransformToSpectra(double[][] samples){
+		double[][] spectrums = new double[samples.length][];
+		for(int i = 0; i < samples.length; i++){
+			spectrums[i] = fastFourierTransformToSpectra(samples[i]);
+		}
+		return spectrums;
+	}
+	
+	/**
+	 * 
 	 * @param sound
 	 * @return
 	 */

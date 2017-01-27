@@ -2,6 +2,7 @@ package local.soundanalysis.algorithm;
 
 import static java.lang.Math.*;
 import static local.soundanalysis.model.signal.Fourier.*;
+import static local.soundanalysis.filter.Filter.*;
 
 import local.soundanalysis.model.Signatures;
 import local.soundanalysis.model.signal.Sound;
@@ -46,9 +47,8 @@ public class MelFrequencyAnalysis {
 	 * @return coefficients in wrapped in Signatures object
 	 */
 	public static Signatures extractCoefficients(Sound sound, int filterSize, int binSize, int coefficientsSize) {
-		double[] mfcc = extractFirstNCoefficient(fastFourierTransformToSpectra(sound), filterSize, binSize,
-				coefficientsSize);
-		return new Signatures(mfcc);
+		return new Signatures(extractCoefficients(sound.getSamples(), sound.getSampleRate(), filterSize, binSize,
+				coefficientsSize));
 	}
 
 	/**
@@ -65,13 +65,31 @@ public class MelFrequencyAnalysis {
 	 *            size of bin
 	 * @param coefficientsSize
 	 *            size of coefficients you want to extract
-	 * @return coefficients in wrapped in Signatures object
+	 * @return coefficients
 	 */
-	public static Signatures extractCoefficients(double[] samples, double sampleRate, int filterSize, int binSize,
+	public static double[] extractCoefficients(double[] samples, double sampleRate, int filterSize, int binSize,
 			int coefficientsSize) {
-		double[] mfcc = extractFirstNCoefficient(fastFourierTransformToSpectra(samples), sampleRate, filterSize,
+		double[][] spectrums = fastFourierTransformToSpectra(calculateFrames(
+				getOverlapFrames(samples, (int) (sampleRate * 0.1)), getHammingFunction((int) (sampleRate * 0.1))));
+		
+		double[][] mfccs = new double[spectrums.length][];
+		for(int i = 0; i < spectrums.length; i++){
+			mfccs[i] = extractFirstNCoefficient(spectrums[i], sampleRate,filterSize,
 				binSize, coefficientsSize);
-		return new Signatures(mfcc);
+		}
+		
+		double[] mfcc = new double[mfccs[0].length];
+		for(int i = 0; i < mfccs.length; i++){
+			for(int j = 0; j < mfcc.length; j++){
+				mfcc[j] += mfccs[i][j];
+			}
+		}
+		
+		for(int i = 0; i < mfcc.length; i++){
+			mfcc[i] /= mfccs.length;
+		}
+		
+		return mfcc;
 	}
 
 	/**
