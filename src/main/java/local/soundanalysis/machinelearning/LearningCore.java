@@ -164,7 +164,7 @@ public class LearningCore implements Serializable {
 	private static double[] extractOutput(INDArray output, int length) {
 		double[] result = new double[length];
 		for (int i = 0; i < length; i++) {
-			result[i] = output.getDouble(0, i);
+			result[i] = output.getDouble(i);
 		}
 		return result;
 	}
